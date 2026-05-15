@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700;900&display=swap');
+
+:root {
+  --phantom-red: #e60012;
+  --midnight-black: #121212;
+  --stark-white: #ffffff;
+  --highlight-yellow: #fce903;
+  
+  --font-heading: 'Anton', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--midnight-black);
+  color: var(--stark-white);
+  overflow-x: hidden;
+  /* Basic halftone background effect */
+  background-image: radial-gradient(var(--phantom-red) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-heading);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Utilities for P5 styling */
+.jagged-border {
+  clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
+}
+
+.jagged-border-alt {
+  clip-path: polygon(0% 5%, 100% 0%, 100% 95%, 0% 100%);
+}
+
+.text-stroke {
+  -webkit-text-stroke: 2px var(--midnight-black);
+  color: var(--stark-white);
+}

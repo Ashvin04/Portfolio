@@ -1,0 +1,31 @@
+.home-page {
+  width: 100%;
+}
+
+.projects-section {
+  padding: 4rem 2rem;
+  background-color: var(--midnight-black);
+  position: relative;
+}
+
+.section-header {
+  background-color: var(--phantom-red);
+  display: inline-block;
+  padding: 1rem 3rem;
+  margin-bottom: 3rem;
+  transform: rotate(2deg);
+}
+
+.section-title {
+  font-size: 4rem;
+  margin: 0;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  padding: 0 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}

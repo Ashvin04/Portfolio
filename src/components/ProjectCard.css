@@ -1,0 +1,88 @@
+.project-card-link {
+  display: block;
+  text-decoration: none;
+  width: 100%;
+  max-width: 400px;
+}
+
+.project-card {
+  position: relative;
+  background-color: var(--stark-white);
+  padding: 1rem;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.project-card:hover {
+  transform: scale(1.05) rotate(2deg);
+}
+
+.project-image-container {
+  width: 100%;
+  height: 200px;
+  background-color: var(--midnight-black);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 5%, 100% 100%, 5% 100%);
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--stark-white);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  background-image: repeating-linear-gradient(45deg, #1a1a1a 0, #1a1a1a 10px, #111111 10px, #111111 20px);
+}
+
+.project-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.project-title {
+  color: var(--midnight-black);
+  font-size: 2.5rem;
+  margin: 0;
+  -webkit-text-stroke: 1px var(--midnight-black);
+}
+
+.project-genre {
+  background-color: var(--phantom-red);
+  color: var(--stark-white);
+  padding: 0.25rem 1rem;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.hover-overlay {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(230, 0, 18, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left 0.3s ease;
+  z-index: 10;
+}
+
+.project-card:hover .hover-overlay {
+  left: 0;
+}
+
+.overlay-text {
+  color: var(--stark-white);
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  transform: rotate(-5deg);
+  text-shadow: 4px 4px 0 var(--midnight-black);
+}

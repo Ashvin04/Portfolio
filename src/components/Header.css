@@ -1,0 +1,56 @@
+.p5-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-container {
+  background-color: var(--phantom-red);
+  padding: 0.5rem 2rem;
+  transform: rotate(-2deg);
+  transition: transform 0.2s ease, background-color 0.2s;
+}
+
+.logo-container:hover {
+  transform: rotate(0deg) scale(1.05);
+  background-color: var(--highlight-yellow);
+}
+
+.logo-container:hover .logo-text {
+  color: var(--midnight-black);
+  -webkit-text-stroke: 0px;
+}
+
+.logo-text {
+  font-size: 2.5rem;
+  font-weight: 900;
+  display: block;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-item {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--stark-white);
+  color: var(--midnight-black);
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  transform: skewX(-10deg);
+  display: inline-block;
+}
+
+.nav-item:hover {
+  background-color: var(--midnight-black);
+  color: var(--stark-white);
+  transform: skewX(-10deg) scale(1.1) translateY(-5px);
+  box-shadow: 5px 5px 0 var(--phantom-red);
+}

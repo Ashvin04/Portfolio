@@ -1,0 +1,108 @@
+.hero-section {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  padding: 2rem 5rem;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background-color: var(--phantom-red);
+  clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 80%);
+  z-index: -1;
+  animation: bg-pulse 5s infinite alternate ease-in-out;
+}
+
+@keyframes bg-pulse {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.05) rotate(1deg); }
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  z-index: 1;
+}
+
+.title-wrapper {
+  background-color: var(--stark-white);
+  padding: 1rem 3rem;
+  transform: rotate(-3deg);
+  box-shadow: 10px 10px 0 var(--midnight-black);
+}
+
+.hero-title {
+  font-size: 6rem;
+  margin: 0;
+  line-height: 1;
+}
+
+.title-wrapper-alt {
+  background-color: var(--midnight-black);
+  padding: 1rem 3rem;
+  transform: rotate(2deg) translateX(50px);
+  box-shadow: -10px 10px 0 var(--highlight-yellow);
+}
+
+.hero-title-alt {
+  font-size: 6rem;
+  margin: 0;
+  line-height: 1;
+  color: var(--stark-white);
+}
+
+.mini-brief {
+  background-color: var(--stark-white);
+  color: var(--midnight-black);
+  padding: 2rem;
+  max-width: 500px;
+  margin-top: 3rem;
+  transform: rotate(-1deg);
+  font-weight: 700;
+  font-size: 1.2rem;
+  border-left: 10px solid var(--highlight-yellow);
+}
+
+.p5-star {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: var(--highlight-yellow);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  z-index: 0;
+}
+
+.star-1 {
+  top: 10%;
+  right: 15%;
+  transform: rotate(15deg);
+  animation: spin 10s linear infinite;
+}
+
+.star-2 {
+  bottom: 20%;
+  right: 30%;
+  width: 60px;
+  height: 60px;
+  background-color: var(--stark-white);
+  transform: rotate(-20deg);
+  animation: spin-reverse 8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
