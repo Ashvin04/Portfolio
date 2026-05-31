@@ -1,0 +1,77 @@
+Found 86 paragraphs.
+
+=================== rId18 -> image7.png ===================
+[P 64]  Round Loss &amp; Power-Ups: The last player standing wins the round. Defeated players are immediately entered into the Power-Up Phase , where they can choose one of 5 randomly drawn cards to permanently buff their character for the remainder of the match.
+[P 65]  Match Win Condition: The first player to reach the Target Scorer (default is 3 wins, adjustable in the lobby) is dedicated the overall winner.
+[P 66] >>> TARGET <<<  
+[P 67]  Designer Instructions on expanding the game
+[P 68]  The data-driven Strategy pattern gives designers the opportunity to easily create, tweak, and implement new power-ups without rouching the core runtime code.
+
+=================== rId21 -> image10.png ===================
+[P 71]  Tweak the Values: Select the newly created ScriptableObject . In the inspector, you can now balance the power-up by adjusting exposed variables. For example, for the Giant power-up, you can increase the Scale Multiplier or Bonus Health, while reducing the Speed Multiplier to balance it CITATION Bob11 \l 2057 (Nystrom, 2011)
+[P 72]  Add to the Deck : Locate the GameMan ager object in the GameScene . Within the Pow erUpSelectionManager component , you will see All Power Ups as an option with an arrow on the left .
+[P 73] >>> TARGET <<<  
+[P 74]  Clicking it will expand the list . Pressing the plus icon will duplicate the last power up in the list, allowing you to override it with the power up . You can do this by clicking on the circle button on the right of the element you want to replace
+[P 75]  
+
+=================== rId12 -> image4.png ===================
+[P 17]  ScriptableObject (SO) Channels: These channels acts as a form of medium between broadcasters and listeners. Broadcasters and listeners will know about the ScriptableObject , but not about each other, making it completely decoupled. For example, when a player spawns/ dies, they register/ deregister with the PlayerCameraChannelSO . This allows the MultiplayerCameraManager to simply listen to this channel, without ever needing direct references to the player prefabs, and updates its cinemachine target group accordingly.
+[P 18]  Local C# Actions &amp; Network Variables: Component-level communication is handled by Action delegates and the NetworkVariable callbacks. The NetworkHealth component broadcasts OnHealthChanged and OnDeath events. PlayerHUDController has these events subscribed so that the UI reacts instantly to damage without any tightly coupled logic.
+[P 19] >>> TARGET <<<  
+[P 20]  PlantURL link
+[P 21]  Strategy Pattern
+
+=================== rId16 -> image6.png ===================
+[P 31]  State Management: The ga me is handled by RoundLifecycleManager , which acrs as a centralised state machine. It seamlessly transitions the server state from active gameplay to Sudden Death, and finally to the Power-Up selection screen.
+[P 32]  RPCs and Authority: ServerRpc handles gameplay actions, like dealing damage and validating blocks . Visual and auditory feedback are then broadcast back to clients using ClientRpc and Network Variable state changes, ensuring minimal network overhead while maintaining a responsive player experience
+[P 33] >>> TARGET <<<  
+[P 34]  PlantUML link
+[P 35]  Documentation
+
+=================== rId20 -> image9.png ===================
+[P 69]  Creating a new Power-Up
+[P 70]  Create the Data Container : In the Unity Editor’s project window, right-click and navigate to Create &gt; PowerUps &gt; [Select Desired Type] (e.g. Giant Transformation)
+[P 71] >>> TARGET <<<  Tweak the Values: Select the newly created ScriptableObject . In the inspector, you can now balance the power-up by adjusting exposed variables. For example, for the Giant power-up, you can increase the Scale Multiplier or Bonus Health, while reducing the Speed Multiplier to balance it CITATION Bob11 \l 2057 (Nystrom, 2011)
+[P 72]  Add to the Deck : Locate the GameMan ager object in the GameScene . Within the Pow erUpSelectionManager component , you will see All Power Ups as an option with an arrow on the left .
+[P 73]  
+
+=================== rId11 -> image3.jpeg ===================
+[P 3]  
+[P 4]  Among Us (Innersloth LLC) – Among Us has a mechanic to keep players engaged to the gam e whilst they are dead. Dead players become ghosts and can still interact with the game to help their team (e.g. sabotage or complete tasks). A lot of games have a spectate feature by simply seeing the game through a specified players camera. Among Us’ ghost spectator mode grants the player full movement freedom. CITATION Inn18 \l 2057 (Innersloth, 2018)
+[P 5] >>> TARGET <<<  
+[P 6]  Multiplicative Mechanic Design
+[P 7]  When designing the game , the core systems were made in such a way to make single mechanics that serve multiple purposes. This prevents the gameplay loop becoming one-dimensional . It increases the skill ceiling without bloating the control scheme.
+
+=================== rId10 -> image2.png ===================
+[P 1]  ROUNDS (Landfall) – The game has a mechanic where players can pick a power up from a selection of “cards”. The power-up picking mechanic is similar to the ones seen in rogue-lite. Games like Hades and Dead Cells are great for a singleplayer setting, however these games are expected to be part of a long tun, so by design, the power ups essentially drip-feed the player with buffs. ROUNDS is a multiplayer game designed to be played in quick bursts, making players have less power-ups overall. ROUNDS combats this by making the power-ups “mechanic changing”. Essentially one power-up can completely change the way you play your game. For example, there is a power-up that transforms their base pistol into a shotgun like weapon. This changes the play style from being able to shoot at any distance to needing to have to be in close quarters but having the advantage of extremely high damage. This shows how the design philosophy between a singleplayer and a multiplayer game differs greatly even when you compare similar mechanics. Games like Call of Duty rewards players for performing well with game changing abilities via the ScoreStreak/ Killstreaks system. I have, however, found that players tend to gain a sense of frustration when the opposing team is dominating, and then they gain access to helicopters, essentially rendering them unstoppable/ ROUNDS’s power up mechanic acts more like a catchup mechanic . Players who are winning are not only challenged by the enemies getting harder as they win, it also gives losers a sense of “correction” when being able to gain a power-up to counter-act the winning players strength. One shortcoming of this game however is that there are moments where players can enter a slate-mate . This image shows the 2 players on equal footing. The game has no means of forcing an end (e.g. no timer, no hazards etc etc). This could cause camping, which slows down the pacing of a round, ruining the flow of the fast-paced game. This is definitely an area where they can improve . CITATION Lan21 \l 2057 (Landfall, 2021)
+[P 2]  Fortnite (Epic Games) - Fortnite Battle Royale (will be called Fortnite for short) is a PvP battle royale game . It is heavily reliant on players fighting other players for the gameplay loop (however has been limited time events with interactable NPCs in a match). Fortnite boasts a large playable area. If we look at Call of Duty Black Ops Cold War, there is a game mode within the game called Outbreak. It, too, boasts a large map, however it is purely a PvE experience that can be taken on by yourself or with friends. These 2 games show how a singleplayer game and multiplayer games have significant differences in how these large-scale maps work. In outbreak, the developers are able to create a sense of constant action. As players, traverse the map to explore points of interest, the game can throw hordes of zombies, mini – bosses, and large-scale events to keep the player on their toes. Fortnite is heavily reliant on player interactions. This means that the developers can’t throw hordes of enemies to keep a player engaged throughout the match but rather design their game in a manner where the players are forced to interact with each other. The primary way Fortnite achieves this is by use of its “Storm”. This essentially pushes players inwards, making the playable space smaller. This is essential for keeping the player engaged with constant combat scenarios , since the a match relies on perma-death, so the total amount of players in a match constantly reduces, hence needing to push players towards a central location. CITATION Epi17 \l 2057 (Epic Games, 2017)
+[P 3] >>> TARGET <<<  
+[P 4]  Among Us (Innersloth LLC) – Among Us has a mechanic to keep players engaged to the gam e whilst they are dead. Dead players become ghosts and can still interact with the game to help their team (e.g. sabotage or complete tasks). A lot of games have a spectate feature by simply seeing the game through a specified players camera. Among Us’ ghost spectator mode grants the player full movement freedom. CITATION Inn18 \l 2057 (Innersloth, 2018)
+[P 5]  
+
+=================== rId19 -> image8.png ===================
+[P 68]  The data-driven Strategy pattern gives designers the opportunity to easily create, tweak, and implement new power-ups without rouching the core runtime code.
+[P 69]  Creating a new Power-Up
+[P 70] >>> TARGET <<<  Create the Data Container : In the Unity Editor’s project window, right-click and navigate to Create &gt; PowerUps &gt; [Select Desired Type] (e.g. Giant Transformation)
+[P 71]  Tweak the Values: Select the newly created ScriptableObject . In the inspector, you can now balance the power-up by adjusting exposed variables. For example, for the Giant power-up, you can increase the Scale Multiplier or Bonus Health, while reducing the Speed Multiplier to balance it CITATION Bob11 \l 2057 (Nystrom, 2011)
+[P 72]  Add to the Deck : Locate the GameMan ager object in the GameScene . Within the Pow erUpSelectionManager component , you will see All Power Ups as an option with an arrow on the left .
+
+=================== rId9 -> image1.jpeg ===================
+[P 0]  Inspiration and Research
+[P 1] >>> TARGET <<<  ROUNDS (Landfall) – The game has a mechanic where players can pick a power up from a selection of “cards”. The power-up picking mechanic is similar to the ones seen in rogue-lite. Games like Hades and Dead Cells are great for a singleplayer setting, however these games are expected to be part of a long tun, so by design, the power ups essentially drip-feed the player with buffs. ROUNDS is a multiplayer game designed to be played in quick bursts, making players have less power-ups overall. ROUNDS combats this by making the power-ups “mechanic changing”. Essentially one power-up can completely change the way you play your game. For example, there is a power-up that transforms their base pistol into a shotgun like weapon. This changes the play style from being able to shoot at any distance to needing to have to be in close quarters but having the advantage of extremely high damage. This shows how the design philosophy between a singleplayer and a multiplayer game differs greatly even when you compare similar mechanics. Games like Call of Duty rewards players for performing well with game changing abilities via the ScoreStreak/ Killstreaks system. I have, however, found that players tend to gain a sense of frustration when the opposing team is dominating, and then they gain access to helicopters, essentially rendering them unstoppable/ ROUNDS’s power up mechanic acts more like a catchup mechanic . Players who are winning are not only challenged by the enemies getting harder as they win, it also gives losers a sense of “correction” when being able to gain a power-up to counter-act the winning players strength. One shortcoming of this game however is that there are moments where players can enter a slate-mate . This image shows the 2 players on equal footing. The game has no means of forcing an end (e.g. no timer, no hazards etc etc). This could cause camping, which slows down the pacing of a round, ruining the flow of the fast-paced game. This is definitely an area where they can improve . CITATION Lan21 \l 2057 (Landfall, 2021)
+[P 2]  Fortnite (Epic Games) - Fortnite Battle Royale (will be called Fortnite for short) is a PvP battle royale game . It is heavily reliant on players fighting other players for the gameplay loop (however has been limited time events with interactable NPCs in a match). Fortnite boasts a large playable area. If we look at Call of Duty Black Ops Cold War, there is a game mode within the game called Outbreak. It, too, boasts a large map, however it is purely a PvE experience that can be taken on by yourself or with friends. These 2 games show how a singleplayer game and multiplayer games have significant differences in how these large-scale maps work. In outbreak, the developers are able to create a sense of constant action. As players, traverse the map to explore points of interest, the game can throw hordes of zombies, mini – bosses, and large-scale events to keep the player on their toes. Fortnite is heavily reliant on player interactions. This means that the developers can’t throw hordes of enemies to keep a player engaged throughout the match but rather design their game in a manner where the players are forced to interact with each other. The primary way Fortnite achieves this is by use of its “Storm”. This essentially pushes players inwards, making the playable space smaller. This is essential for keeping the player engaged with constant combat scenarios , since the a match relies on perma-death, so the total amount of players in a match constantly reduces, hence needing to push players towards a central location. CITATION Epi17 \l 2057 (Epic Games, 2017)
+[P 3]  
+
+=================== rId14 -> image5.png ===================
+[P 24]  Power-Up Abstraction: The PlayerPowerUpCOntroller maintains a list of active power-ups without needing to know what they do. The PowerUpEffect abstract class defines the contract ( OnEquip and OnUnequip ). The logic of the mech anic are in the individual script.
+[P 25]  Data- Driven Strategy Configu ration: PowerUpDefinition ScriptableObjects acts as data containers. The carriable values can be edited in the editor. When a power-up is granted, the ScriptableObject simply passes its customised data into the strategy class and equips it to the player. This completely separates the design balancing data from the runtime execution logic. CITATION Uni17 \l 2057 (Unity, 2017)
+[P 26] >>> TARGET <<<  
+[P 27]  PlantURL link
+[P 28]  Network Architecture
+
+=================== rId22 -> image11.png ===================
+[P 73]  
+[P 74]  Clicking it will expand the list . Pressing the plus icon will duplicate the last power up in the list, allowing you to override it with the power up . You can do this by clicking on the circle button on the right of the element you want to replace
+[P 75] >>> TARGET <<<  
+[P 76]  The game will ignore elements that are unassigned.
+[P 77]  Bibliography

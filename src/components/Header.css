@@ -2,55 +2,106 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  position: sticky;
+  padding: 15px 40px;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
+  pointer-events: none; /* Let background elements remain clickable except actual buttons */
+  background: linear-gradient(to bottom, rgba(8, 8, 8, 0.9) 0%, transparent 100%);
 }
 
-.logo-container {
-  background-color: var(--phantom-red);
-  padding: 0.5rem 2rem;
-  transform: rotate(-2deg);
-  transition: transform 0.2s ease, background-color 0.2s;
-}
-
-.logo-container:hover {
-  transform: rotate(0deg) scale(1.05);
-  background-color: var(--highlight-yellow);
-}
-
-.logo-container:hover .logo-text {
-  color: var(--midnight-black);
-  -webkit-text-stroke: 0px;
-}
-
-.logo-text {
-  font-size: 2.5rem;
-  font-weight: 900;
-  display: block;
-}
-
-.nav-links {
+.p5-header-nav {
   display: flex;
-  gap: 1.5rem;
+  gap: 20px;
+  pointer-events: auto;
 }
 
-.nav-item {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  padding: 0.5rem 1.5rem;
-  background-color: var(--stark-white);
-  color: var(--midnight-black);
+.p5-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.p5-header-logo-text {
+  font-family: var(--font-p5-ransom);
+  font-size: 2.2rem;
+  background-color: var(--p5-white);
+  color: var(--p5-black);
+  padding: 4px 18px;
+  transform: skewX(-15deg) rotate(-2deg);
+  box-shadow: 4px 4px 0 var(--p5-red);
   text-transform: uppercase;
-  transition: all 0.2s ease;
-  transform: skewX(-10deg);
-  display: inline-block;
+  transition: all 0.15s ease-out;
+  letter-spacing: -1px;
 }
 
-.nav-item:hover {
-  background-color: var(--midnight-black);
-  color: var(--stark-white);
-  transform: skewX(-10deg) scale(1.1) translateY(-5px);
-  box-shadow: 5px 5px 0 var(--phantom-red);
+.p5-header-left:hover .p5-header-logo-text {
+  background-color: var(--p5-red);
+  color: var(--p5-white);
+  transform: skewX(-15deg) rotate(1deg) scale(1.05);
+  box-shadow: 4px 4px 0 var(--p5-yellow);
+}
+
+.p5-nav-btn {
+  font-family: var(--font-p5-header);
+  font-weight: 900;
+  font-size: 1.2rem;
+  padding: 6px 18px;
+  background-color: var(--p5-white);
+  color: var(--p5-black);
+  transform: skewX(-12deg) rotate(-1deg);
+  border: 2px solid var(--p5-black);
+  box-shadow: 4px 4px 0 var(--p5-black);
+  transition: all 0.15s cubic-bezier(0.19, 1, 0.22, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p5-nav-btn span.num {
+  font-family: var(--font-p5-ransom);
+  font-size: 0.95rem;
+  color: var(--p5-red);
+  font-weight: bold;
+}
+
+.p5-nav-btn.active {
+  background-color: var(--p5-red);
+  color: var(--p5-white);
+  border-color: var(--p5-white);
+  box-shadow: 6px 6px 0 var(--p5-black);
+  transform: skewX(-12deg) rotate(-2deg) scale(1.05);
+}
+
+.p5-nav-btn:hover:not(.active) {
+  background-color: var(--p5-yellow);
+  color: var(--p5-black);
+  box-shadow: 6px 6px 0 var(--p5-red);
+  transform: skewX(-12deg) rotate(2deg) scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .p5-header {
+    padding: 10px 15px;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgba(8, 8, 8, 0.95);
+    border-bottom: 3px solid var(--p5-red);
+    pointer-events: auto;
+  }
+  
+  .p5-header-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .p5-nav-btn {
+    font-size: 0.95rem;
+    padding: 4px 10px;
+  }
 }

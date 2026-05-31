@@ -1,0 +1,206 @@
+.p5-works-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.p5-featured-project {
+  background-color: var(--p5-charcoal);
+  border: 4px solid var(--p5-white);
+  padding: 35px;
+  position: relative;
+  box-shadow: 10px 10px 0 var(--p5-red);
+  transform: rotate(-0.5deg);
+  overflow: hidden;
+}
+
+/* Lava overlay mockup pattern for the Knock Out featured card */
+.knockout-lava-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 70% 40%, rgba(230, 0, 18, 0.15) 0%, transparent 60%),
+              linear-gradient(135deg, rgba(8, 8, 8, 0.95) 40%, rgba(179, 0, 11, 0.4) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.p5-featured-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 15px;
+  border-bottom: 2px solid var(--p5-white);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.p5-featured-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.p5-featured-subtitle {
+  font-family: var(--font-p5-hand);
+  font-size: 1.6rem;
+  color: var(--p5-yellow);
+  margin-top: 5px;
+}
+
+.p5-badge-unity {
+  background-color: var(--p5-white);
+  color: var(--p5-black);
+  font-family: var(--font-p5-menu);
+  font-size: 1.2rem;
+  padding: 4px 15px;
+  transform: skewX(-15deg);
+  border: 2px solid var(--p5-black);
+}
+
+.p5-featured-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 1024px) {
+  .p5-featured-content {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+/* Visual game screen mockup */
+.p5-project-mockup {
+  background-color: #1a1a1a;
+  border: 4px solid var(--p5-black);
+  height: 320px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p5-project-mockup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  z-index: 5;
+}
+
+/* Simulated hexagons from the game poster */
+.hex-grid-mockup {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+  background-image: radial-gradient(var(--p5-white) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Skewed tags columns from the poster */
+.p5-tag-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.p5-feature-tag {
+  background-color: var(--p5-white);
+  color: var(--p5-black);
+  font-family: var(--font-p5-menu);
+  font-size: 1.15rem;
+  padding: 8px 16px;
+  border-left: 6px solid var(--p5-red);
+  transform: skewX(-12deg);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+  transition: all 0.15s ease-out;
+}
+
+.p5-feature-tag:hover {
+  background-color: var(--p5-red);
+  color: var(--p5-white);
+  transform: skewX(-12deg) scale(1.03) translateX(5px);
+}
+
+.p5-feature-tag.right-tag {
+  background-color: var(--p5-black);
+  color: var(--p5-white);
+  border-left: 6px solid var(--p5-yellow);
+}
+
+.p5-feature-tag.right-tag:hover {
+  background-color: var(--p5-yellow);
+  color: var(--p5-black);
+}
+
+/* Grid for regular secondary projects */
+.p5-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.p5-project-card {
+  background-color: var(--p5-charcoal);
+  border: 4px solid var(--p5-white);
+  padding: 25px;
+  transform: rotate(1deg);
+  box-shadow: 6px 6px 0 var(--p5-black);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 250px;
+  height: auto;
+  transition: all 0.15s ease-out;
+  cursor: pointer;
+}
+
+.p5-project-card:hover {
+  transform: rotate(-1deg) scale(1.03);
+  box-shadow: 8px 8px 0 var(--p5-red);
+  border-color: var(--p5-yellow);
+}
+
+.p5-card-header {
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.p5-card-title {
+  font-family: var(--font-p5-menu);
+  font-size: 1.8rem;
+  color: var(--p5-white);
+}
+
+.p5-card-genre {
+  font-family: var(--font-p5-hand);
+  font-size: 1.2rem;
+  color: var(--p5-red);
+}
+
+.p5-card-desc {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #bbb;
+  flex-grow: 1;
+}
+
+.p5-card-action {
+  font-family: var(--font-p5-menu);
+  font-size: 1rem;
+  color: var(--p5-yellow);
+  text-align: right;
+  margin-top: 10px;
+}

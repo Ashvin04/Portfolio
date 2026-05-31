@@ -1,13 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700;900&display=swap');
+@font-face {
+  font-family: 'Persona5Menu';
+  src: url('/fonts/Persona5MenuFontPrototype-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'P5Hatty';
+  src: url('/fonts/p5hatty-1.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  --phantom-red: #e60012;
-  --midnight-black: #121212;
-  --stark-white: #ffffff;
-  --highlight-yellow: #fce903;
+  --p5-red: #e60012;
+  --p5-red-dark: #b3000b;
+  --p5-black: #080808;
+  --p5-charcoal: #181818;
+  --p5-white: #ffffff;
+  --p5-yellow: #00f0ff; /* Persona 5 Menu Selection Blue/Cyan */
   
-  --font-heading: 'Anton', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  /* Typography changes: prioritising readability */
+  --font-p5-ransom: 'Persona5Menu', Impact, sans-serif; /* Blocky - use sparingly for accents */
+  --font-p5-hand: 'P5Hatty', cursive, sans-serif; /* Highly legible handwriting */
+  --font-p5-body: 'Inter', sans-serif;
+  --font-p5-header: 'Inter', Impact, sans-serif; /* Clean, bold header font */
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 * {
@@ -17,44 +40,232 @@
 }
 
 body {
-  font-family: var(--font-body);
-  background-color: var(--midnight-black);
-  color: var(--stark-white);
+  font-family: var(--font-p5-body);
+  background-color: var(--p5-black);
+  color: var(--p5-white);
   overflow-x: hidden;
-  /* Basic halftone background effect */
-  background-image: radial-gradient(var(--phantom-red) 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-position: 0 0;
+  min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  text-transform: uppercase;
-  letter-spacing: 2px;
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: var(--p5-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--p5-red);
+  border: 3px solid var(--p5-black);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--p5-white);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+  transition: all 0.15s ease-out;
 }
 
 button {
-  font-family: var(--font-heading);
+  font-family: var(--font-p5-header);
+  font-weight: 900;
   cursor: pointer;
   border: none;
   background: none;
+  outline: none;
 }
 
-/* Utilities for P5 styling */
-.jagged-border {
-  clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
+/* Red/Black spiral background grid */
+.p5-bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  background-color: var(--p5-black);
+  overflow: hidden;
 }
 
-.jagged-border-alt {
-  clip-path: polygon(0% 5%, 100% 0%, 100% 95%, 0% 100%);
+.p5-bg-stripes {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--p5-black),
+    var(--p5-black) 40px,
+    #111111 40px,
+    #111111 80px
+  );
+  transform: rotate(-15deg);
+  opacity: 0.7;
 }
 
-.text-stroke {
-  -webkit-text-stroke: 2px var(--midnight-black);
-  color: var(--stark-white);
+.p5-bg-halftone {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(230, 0, 18, 0.1) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.p5-bg-spiral {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140vmax;
+  height: 140vmax;
+  transform: translate(-50%, -50%);
+  background: repeating-radial-gradient(
+    circle,
+    var(--p5-black),
+    var(--p5-black) 40px,
+    var(--p5-red) 40px,
+    var(--p5-red) 80px
+  );
+  opacity: 0.12;
+  animation: p5-spin 120s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes p5-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Snappy spring-like animations and utilities */
+.p5-transition-snappy {
+  transition: all 0.18s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Polygon cutouts & Skews */
+.skew-l-5 { transform: skewX(-5deg); }
+.skew-l-10 { transform: skewX(-10deg); }
+.skew-l-15 { transform: skewX(-15deg); }
+.skew-r-5 { transform: skewX(5deg); }
+.skew-r-10 { transform: skewX(10deg); }
+.skew-r-15 { transform: skewX(15deg); }
+
+.p5-clip-1 {
+  clip-path: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
+}
+
+.p5-clip-2 {
+  clip-path: polygon(0% 8%, 100% 0%, 98% 92%, 2% 100%);
+}
+
+.p5-clip-star {
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+/* Star vector rotation animation */
+.spin-slow {
+  animation: spin 30s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Ransom note specific letters */
+.p5-ransom-letter {
+  display: inline-block;
+  font-family: var(--font-p5-ransom);
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.2em 0.3em;
+  margin: 0.05em;
+  transform: rotate(var(--r-rot)) translateY(var(--r-y));
+  background-color: var(--r-bg);
+  color: var(--r-fg);
+  border: var(--r-border);
+  font-size: var(--r-size);
+  box-shadow: 4px 4px 0px var(--p5-black);
+}
+
+/* Persona 5 Menu Button Style */
+.p5-menu-item {
+  font-family: var(--font-p5-header);
+  font-weight: 900;
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  color: var(--p5-white);
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  padding: 5px 25px;
+  background: transparent;
+  transform: skewX(-12deg);
+  transition: all 0.15s cubic-bezier(0.19, 1, 0.22, 1);
+  margin: 10px 0;
+  z-index: 10;
+}
+
+.p5-menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: var(--p5-red);
+  z-index: -1;
+  transition: all 0.15s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.p5-menu-item:hover {
+  color: var(--p5-black);
+  transform: skewX(-12deg) scale(1.1) translateX(15px);
+  text-shadow: 2px 2px 0 var(--p5-white);
+}
+
+.p5-menu-item:hover::before {
+  width: 100%;
+  box-shadow: -8px 8px 0 var(--p5-yellow);
+}
+
+/* Layout containers */
+.p5-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+@media (min-width: 1024px) {
+  .p5-layout-grid {
+    grid-template-columns: 1.2fr 2fr;
+  }
+}
+
+/* Persona statistics panel */
+.p5-stats-panel {
+  background: var(--p5-charcoal);
+  border: 4px solid var(--p5-white);
+  position: relative;
+  padding: 30px;
+  box-shadow: 8px 8px 0 var(--p5-red);
+  transform: rotate(-1deg);
+}
+
+/* Project Detail Modal Overlay */
+.p5-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(8, 8, 8, 0.95);
+  z-index: 900;
+  overflow-y: auto;
+  padding: 40px 20px;
 }

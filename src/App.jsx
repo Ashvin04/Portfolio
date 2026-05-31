@@ -1,22 +1,107 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './pages/Home';
-import ProjectDetails from './pages/ProjectDetails';
 import About from './pages/About';
+import Works from './pages/Works';
+import CallingCard from './pages/CallingCard';
+import ProjectDetails from './pages/ProjectDetails';
+import './App.css';
 
+// Main Scrolling Single Page Component
+const MainPortfolio = () => {
+  const [activeView, setActiveView] = useState('home');
+
+  // Scroll to top on mount (e.g. when navigating back from ProjectDetails)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Monitor scroll positioning to update active section in header nav
+  useEffect(() => {
+    const sections = ['home', 'programmer', 'works', 'card'];
+    
+    const observerOptions = {
+      root: null,
+      rootMargin: '-30% 0px -60% 0px', // Center viewport bias
+      threshold: 0
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveView(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleNavClick = (id) => {
+    if (id === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setActiveView(id);
+      return;
+    }
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      setActiveView(id);
+    }
+  };
+
+  return (
+    <>
+      {/* Header Menu */}
+      <Header activeView={activeView} onNavClick={handleNavClick} />
+      
+      {/* Scrollable Layout sections */}
+      <div id="home">
+        <Home activeView={activeView} onNavClick={handleNavClick} />
+      </div>
+      
+      <div id="programmer">
+        <About onNavClick={handleNavClick} />
+      </div>
+      
+      <div id="works">
+        {/* We pass undefined for project click because Works will use useNavigate directly */}
+        <Works onProjectClick={undefined} onNavClick={handleNavClick} />
+      </div>
+      
+      <div id="card">
+        <CallingCard onNavClick={handleNavClick} />
+      </div>
+    </>
+  );
+};
+
+// Main Routing App Component
 function App() {
   return (
     <Router>
       <div className="app-container">
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/project/:id" element={<ProjectDetails />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
+        {/* Dynamic full-screen background */}
+        <div className="p5-bg-canvas">
+          <div className="p5-bg-stripes"></div>
+          <div className="p5-bg-halftone"></div>
+          <div className="p5-bg-spiral"></div>
+        </div>
+
+        <Routes>
+          {/* Main Landing Route */}
+          <Route path="/" element={<MainPortfolio />} />
+          
+          {/* Dedicated Project Details Page Route */}
+          <Route path="/project/:id" element={<ProjectDetails />} />
+        </Routes>
       </div>
     </Router>
   );

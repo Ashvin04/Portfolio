@@ -1,31 +1,164 @@
-.home-page {
-  width: 100%;
+.p5-home-container {
+  display: flex;
+  min-height: calc(100vh - 120px);
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
 }
 
-.projects-section {
-  padding: 4rem 2rem;
-  background-color: var(--midnight-black);
-  position: relative;
-}
-
-.section-header {
-  background-color: var(--phantom-red);
-  display: inline-block;
-  padding: 1rem 3rem;
-  margin-bottom: 3rem;
-  transform: rotate(2deg);
-}
-
-.section-title {
-  font-size: 4rem;
-  margin: 0;
-}
-
-.projects-grid {
+.p5-home-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 3rem;
-  padding: 0 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 50px;
+}
+
+@media (min-width: 1024px) {
+  .p5-home-layout {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: center;
+  }
+}
+
+.p5-hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.p5-hero-title-plate {
+  background-color: var(--p5-white);
+  color: var(--p5-black);
+  padding: 10px 25px;
+  transform: skewX(-12deg) rotate(-3deg);
+  border: 4px solid var(--p5-black);
+  box-shadow: 8px 8px 0 var(--p5-red);
+  margin-top: 15px;
+}
+
+.p5-hero-title-plate h1 {
+  font-family: var(--font-p5-header);
+  font-weight: 900;
+  font-size: 2.8rem;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.p5-hero-subtitle {
+  font-family: var(--font-p5-hand);
+  font-size: 2.2rem;
+  color: var(--p5-yellow);
+  transform: rotate(-1deg);
+  line-height: 1.1;
+  text-shadow: 2px 2px 0 var(--p5-black);
+}
+
+.p5-hero-desc {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 500px;
+  background-color: rgba(8, 8, 8, 0.85);
+  border-left: 5px solid var(--p5-red);
+  padding: 15px 20px;
+  transform: skewX(-6deg);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.p5-home-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: flex-start;
+  padding-left: 20px;
+}
+
+/* Dynamic styling for the large menu options */
+.p5-main-menu-item {
+  font-family: var(--font-p5-header);
+  font-weight: 900;
+  font-size: 3rem;
+  text-transform: uppercase;
+  background-color: var(--p5-black);
+  color: var(--p5-white);
+  border: 4px solid var(--p5-white);
+  padding: 10px 30px;
+  width: 100%;
+  max-width: 550px;
+  text-align: left;
+  transform: skewX(-15deg) rotate(-2deg);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  box-shadow: 8px 8px 0 var(--p5-black);
+  transition: all 0.15s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.p5-main-menu-item .menu-num {
+  font-family: var(--font-p5-ransom);
+  font-size: 1.8rem;
+  color: var(--p5-red);
+  margin-right: 15px;
+}
+
+.p5-main-menu-item .menu-arrow {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: var(--p5-yellow);
+}
+
+.p5-main-menu-item:hover {
+  background-color: var(--p5-red);
+  color: var(--p5-white);
+  transform: skewX(-15deg) rotate(-4deg) scale(1.05) translateX(15px);
+  box-shadow: -10px 10px 0 var(--p5-yellow), 8px 8px 0 var(--p5-black);
+  border-color: var(--p5-white);
+}
+
+.p5-main-menu-item:hover .menu-num {
+  color: var(--p5-white);
+}
+
+.p5-main-menu-item:hover .menu-arrow {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger offset effect for visual variety */
+.p5-main-menu-item:nth-child(2) {
+  transform: skewX(-15deg) rotate(1deg);
+  margin-left: 20px;
+}
+.p5-main-menu-item:nth-child(2):hover {
+  transform: skewX(-15deg) rotate(-1deg) scale(1.05) translateX(15px);
+}
+
+.p5-main-menu-item:nth-child(3) {
+  transform: skewX(-15deg) rotate(-3deg);
+  margin-left: -10px;
+}
+.p5-main-menu-item:nth-child(3):hover {
+  transform: skewX(-15deg) rotate(-5deg) scale(1.05) translateX(15px);
+}
+
+@media (max-width: 768px) {
+  .p5-main-menu-item {
+    font-size: 1.8rem;
+    padding: 8px 15px;
+  }
+  .p5-main-menu-item .menu-num {
+    font-size: 1.2rem;
+  }
+  .p5-home-menu {
+    padding-left: 0;
+    width: 100%;
+  }
+  .p5-main-menu-item:nth-child(2),
+  .p5-main-menu-item:nth-child(3) {
+    margin-left: 0;
+  }
 }

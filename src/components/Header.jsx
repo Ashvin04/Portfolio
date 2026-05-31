@@ -1,16 +1,40 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import AJStar from './AJStar';
 import './Header.css';
 
-const Header = () => {
+const Header = ({ activeView, onNavClick }) => {
+  const menuItems = [
+    { id: 'home', label: 'HOME', num: '01' },
+    { id: 'programmer', label: 'ABOUT', num: '02' },
+    { id: 'works', label: 'PROJECTS', num: '03' },
+    { id: 'card', label: 'CONTACT', num: '04' }
+  ];
+
   return (
     <header className="p5-header">
-      <div className="logo-container jagged-border">
-        <Link to="/" className="logo-text text-stroke">PORTFOLIO</Link>
+      <div className="p5-header-left" onClick={() => onNavClick('home')} style={{ minWidth: '95px', minHeight: '95px', display: 'flex', alignItems: 'center' }}>
+        {activeView !== 'home' && (
+          <motion.div 
+            layoutId="shared-star" 
+            style={{ display: 'inline-block' }}
+            transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+          >
+            <AJStar size={85} animate={true} />
+          </motion.div>
+        )}
       </div>
-      <nav className="nav-links">
-        <Link to="/" className="nav-item jagged-border-alt">HOME</Link>
-        <Link to="/about" className="nav-item jagged-border-alt">ABOUT</Link>
+      
+      <nav className="p5-header-nav">
+        {menuItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => onNavClick(item.id)}
+            className={`p5-nav-btn ${activeView === item.id ? 'active' : ''}`}
+          >
+            <span className="num">{item.num}</span>
+            <span>{item.label}</span>
+          </button>
+        ))}
       </nav>
     </header>
   );
