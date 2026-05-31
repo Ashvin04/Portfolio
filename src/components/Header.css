@@ -88,20 +88,35 @@
   .p5-header {
     padding: 10px 15px;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     background-color: rgba(8, 8, 8, 0.95);
     border-bottom: 3px solid var(--p5-red);
     pointer-events: auto;
+    position: sticky; /* Keep it sticky or fixed, but flowable */
+  }
+  
+  .p5-header-left {
+    min-width: unset !important;
+    min-height: unset !important;
+    height: 60px; /* Constrain size on mobile so it doesn't spill over */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .p5-header-left div {
+    transform: scale(0.7); /* Scale star down slightly on mobile so it fits nicely */
   }
   
   .p5-header-nav {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
+    width: 100%;
   }
   
   .p5-nav-btn {
-    font-size: 0.95rem;
-    padding: 4px 10px;
+    font-size: 0.9rem;
+    padding: 4px 8px;
   }
 }

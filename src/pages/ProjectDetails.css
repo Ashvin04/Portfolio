@@ -302,7 +302,14 @@
   transition: all 0.15s ease;
 }
 
-.p5-diagram-tab:hover, .p5-diagram-tab.active {
+.p5-diagram-tab:hover {
+  background-color: var(--p5-yellow);
+  border-color: var(--p5-yellow);
+  color: var(--p5-black);
+  box-shadow: -4px 4px 0 var(--p5-white);
+}
+
+.p5-diagram-tab.active {
   background-color: var(--p5-red);
   border-color: var(--p5-red);
   color: var(--p5-white);

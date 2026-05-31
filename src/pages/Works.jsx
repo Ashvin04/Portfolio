@@ -11,19 +11,11 @@ const Works = ({ onNavClick }) => {
       id: 'project-knockout',
       title: 'KNOCK OUT',
       genre: 'MULTIPLAYER HEX BRAWLER',
-      desc: 'Physics-based multiplayer hex brawler where players are tethered together. Built at Staffs Uni for Gradex. Features custom server-authoritative netcode, camera tracking, and adaptive audio integration.',
+      desc: 'Physics-based multiplayer hex brawler where players are tethered together. Built at Staffs Uni. Features custom server-authoritative netcode, camera tracking, and adaptive audio integration.',
       featured: true,
       platform: 'Unity / C#',
       leftTags: ['Netcode Sync', 'Dynamic Camera System', 'Adaptive Audio', 'UI Toolkit UI'],
       rightTags: ['Shrinking Battle Map', 'Deep Combat Mechanic', 'Rogue-lite Catch-Up']
-    },
-    {
-      id: 'neon-drifter',
-      title: 'NEON DRIFTER',
-      genre: 'ARCADE RACER',
-      desc: 'High-speed arcade racing game emphasizing drift physics and dynamic track generation. Designed system-level vehicle controllers and custom serialization profiles.',
-      featured: false,
-      platform: 'Unreal Engine / C++',
     },
     {
       id: '2d-platformer',
@@ -33,11 +25,20 @@ const Works = ({ onNavClick }) => {
       featured: false,
       platform: 'Unity / C#',
       image: 'images/documentation/platformer_main_screenshot.png'
+    },
+    {
+      id: 'unity-vr',
+      title: 'UNITY VR FRAMEWORK',
+      genre: 'XR INTERACTION SHOWCASE',
+      desc: 'An immersive Unity VR interaction framework extending the XR Interaction Toolkit (XRI). Features custom velocity-based physical combat, look-rotation two-handed grip mechanics, exclusive tag sockets, and sensory intoxication shaders.',
+      featured: false,
+      platform: 'Unity / C#',
+      image: 'images/documentation/vr_editor_screenshot.png'
     }
   ];
 
   return (
-    <div className="page-container" style={{ minHeight: '90vh', padding: '60px 0' }}>
+    <div className="page-container" style={{ minHeight: 'auto', padding: '20px 0' }}>
       <div className="p5-works-container">
         
         {/* Title */}

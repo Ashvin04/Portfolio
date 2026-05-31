@@ -238,6 +238,78 @@ public void DisablePlayerMovement()
 {
     m_ActionMap.Default.Disable();
     m_ActionMap.UI.Enable(); // Swap action maps authoritatively
+}` /**/,
+  poolCueGrab: `// PoolCueGrab.cs - Look-Rotation Aim Joint Calculation
+private void HandleTwoHandedManipulation()
+{
+    if (transform.parent != null) transform.SetParent(null, worldPositionStays: true);
+
+    Vector3 primaryHandPos = m_PrimaryControllerAttach.position;
+    Quaternion primaryHandRot = m_PrimaryControllerAttach.rotation;
+    Vector3 secondaryHandPos = m_SecondaryControllerAttach.position;
+    Quaternion secondaryHandRot = m_SecondaryControllerAttach.rotation;
+
+    Vector3 worldAimDirection = (secondaryHandPos - primaryHandPos);
+    if (worldAimDirection.sqrMagnitude < m_MinHandDistanceForTwoHandAim * m_MinHandDistanceForTwoHandAim)
+    {
+        worldAimDirection = primaryHandRot * Vector3.forward;
+    }
+    worldAimDirection.Normalize();
+
+    Vector3 localAimDirection = (m_SecondaryGripPoint.localPosition - m_PrimaryGripPoint.localPosition).normalized;
+    Quaternion targetCueRotation = Quaternion.LookRotation(worldAimDirection, primaryHandRot * Vector3.up);
+    Quaternion finalRotation = targetCueRotation * Quaternion.Inverse(Quaternion.LookRotation(localAimDirection));
+    transform.rotation = finalRotation;
+
+    // Apply secondary roll twist influence relative to controller normal
+    if (m_SecondaryRollInfluence > 0.0f && m_SecondaryGripPoint != null)
+    {
+        Vector3 cueSecondaryGripWorldUp = transform.rotation * (m_SecondaryGripPoint.localRotation * Vector3.up);
+        Vector3 secondaryControllerWorldUp = secondaryHandRot * Vector3.up;
+        Vector3 planeNormal = worldAimDirection;
+        Vector3 projectedCueUp = Vector3.ProjectOnPlane(cueSecondaryGripWorldUp, planeNormal).normalized;
+        Vector3 projectedControllerUp = Vector3.ProjectOnPlane(secondaryControllerWorldUp, planeNormal).normalized;
+
+        if (projectedCueUp.sqrMagnitude > 0.01f && projectedControllerUp.sqrMagnitude > 0.01f)
+        {
+            float rollAngleDiff = Vector3.SignedAngle(projectedCueUp, projectedControllerUp, planeNormal);
+            Quaternion rollAdjustment = Quaternion.AngleAxis(rollAngleDiff * m_SecondaryRollInfluence, planeNormal);
+            transform.rotation = rollAdjustment * transform.rotation;
+        }
+    }
+    transform.position = primaryHandPos - (transform.rotation * m_PrimaryGripPoint.localPosition);
+}`,
+  controllerVelocity: `// ControllerVelocity.cs - Physical Velocity Derivation
+void Update()
+{
+    float dt = Time.deltaTime;
+
+    Vector3 currentControllerPosition = transform.position;
+    Vector3 rawControllerVel = (currentControllerPosition - m_LastControllerPosition) / dt;
+    Vector3 rigVel = Vector3.zero;
+    Vector3 currentRigPos = m_RigController.transform.position;
+    
+    // Subtract rig artificial locomotion to calculate true physical velocity
+    rigVel = (currentRigPos - m_LastRigPosition) / dt;
+    m_LastRigPosition = currentRigPos;
+
+    m_Velocity = rawControllerVel - rigVel;
+    m_LastControllerPosition = currentControllerPosition;
+}`,
+  ignoreCollisionWithSocket: `// IgnoreCollisionWithSocket.cs - Micro-Collision Jitter Resolver
+void OnSelectEntered(SelectEnterEventArgs args)
+{
+    GameObject other = args.interactableObject.transform.gameObject;
+    _theirCollider = other.GetComponent<Collider>();
+
+    // Dynamically disable collisions between socket and held object
+    Physics.IgnoreCollision(_ourCollider, _theirCollider, true);
+}
+
+void OnSelectExited(SelectExitEventArgs args)
+{
+    // Restore physics properties upon selection exit
+    Physics.IgnoreCollision(_ourCollider, _theirCollider, false);
 }`
 };
 
@@ -314,11 +386,44 @@ const FORGIVENESS_DIAGRAMS = [
     src: 'images/documentation/variable_jump_strength.png', 
     desc: 'Outlines Variable Jump Strength. The controller applies upward velocity dynamically. Releasing the jump button early applies an active downward deceleration force, allowing player-controlled jump heights.' 
   },
-  { 
+  {
     id: 'plat-corner-clip', 
     label: 'Bumped Head & Corner Clipping', 
     src: 'images/documentation/bumped_head_correction.png', 
     desc: 'Visualizes the Bumped Head Correction. If the player jumps and their bounding box collides with the lower corner of a ceiling/ledge, the physics engine applies a lateral offset to slide them around the obstacle instead of stopping upward velocity.' 
+  }
+];
+
+const VR_DIAGRAMS = [
+  { 
+    id: 'vr-arch', 
+    label: 'Overall Component Architecture', 
+    src: 'images/documentation/vr_overall_architecture.png', 
+    desc: 'UML class diagram displaying the overall VR framework system interactions. Displays the separation of concerns, decoupling character controller rigs from independent trackers, AI navigators, and interactive components.' 
+  },
+  { 
+    id: 'vr-two-hand', 
+    label: 'Two-Handed Grip Joints', 
+    src: 'images/documentation/vr_two_handed_manipulation.png', 
+    desc: 'Activity diagram displaying the look-rotation and twist-roll vector alignment calculations used to resolve gimbal locks on two-handed grabs.' 
+  },
+  { 
+    id: 'vr-velocity', 
+    label: 'Velocity Combat Interaction', 
+    src: 'images/documentation/vr_velocity_combat.png', 
+    desc: 'Sequence diagram displaying physical swing velocity derivation. Subtracts artificial rig motion from tracked controllers to calculate true kinetic impacts.' 
+  },
+  { 
+    id: 'vr-enemy-ai', 
+    label: 'Enemy AI & Animator States', 
+    src: 'images/documentation/vr_enemy_ai_state_machine.png', 
+    desc: 'State machine displaying transitions for the NavMesh enemy AI, blending walking/running and locking damage vulnerabilities during hit reactions.' 
+  },
+  { 
+    id: 'vr-puzzle', 
+    label: 'Combination Unlock Sequence', 
+    src: 'images/documentation/vr_sequential_puzzle.png', 
+    desc: 'Activity diagram detailing the sequential input state verification for combination button puzzle unlocking mechanics.' 
   }
 ];
 
@@ -382,6 +487,36 @@ const CODE_EXPLANATIONS = {
       "Swaps action maps dynamically using DisablePlayerMovement() upon death.",
       "Shields character movement logic from direct input polling loops."
     ]
+  },
+  poolCueGrab: {
+    title: "Look-Rotation Two-Handed Manipulation",
+    concept: "Aim Joint Vector Calculation",
+    description: "Derives aiming vectors and roll twist values to drive a physical cue stick. The primary grip acts as the position anchor, the secondary grip dictates the pointing direction, and a signed angle calculation manages wrist rotation.",
+    points: [
+      "Calculates world aim directions using relative positions of tracking transforms.",
+      "Implements roll adjustments using Vector3.SignedAngle and Projected Normals.",
+      "Solves wrist-breaking rotation snapping when grabbing items with multiple hands."
+    ]
+  },
+  controllerVelocity: {
+    title: "Rig-Independent Controller Velocity",
+    concept: "Manual True Velocity Derivation",
+    description: "Extracts physical swing speed independent of character locomotion. Derives controller velocity from position deltas over time, then subtracts character rig locomotion velocity to isolate true physical player swings.",
+    points: [
+      "Derives raw tracking controller velocity from position differences over deltaTime.",
+      "Isolates true hand swing velocity by subtracting walking/artificial locomotion.",
+      "Enables velocity-threshold swings to trigger damage dynamically."
+    ]
+  },
+  ignoreCollisionWithSocket: {
+    title: "Micro-Collision Jitter Resolver",
+    concept: "Dynamic IgnoreCollision Binding",
+    description: "Temporarily disables collider physical responses when an object enters an XRSocketInteractor. Stops persistent micro-collisions that trigger jittering and player rig physics spasms.",
+    points: [
+      "Subscribes to selectEntered and selectExited UnityEvents on the XRI socket.",
+      "Instructs Physics.IgnoreCollision to disable physical interaction dynamically.",
+      "Ensures butter-smooth snapping without losing physical physics behavior after exit."
+    ]
   }
 };
 
@@ -400,12 +535,6 @@ const PROJECT_DATA = {
       { action: 'Jump', key: 'Spacebar', pad: 'South Button' }
     ]
   },
-  'neon-drifter': {
-    title: 'NEON DRIFTER',
-    subtitle: 'ARCADE RACER PROJECT',
-    desc: 'A fast-paced neon-lit arcade racer focusing on drift dynamics, custom suspension calculations, and dynamic track rendering.',
-    tech: ['Unreal Engine', 'C++', 'Chaos Physics', 'UI Design']
-  },
   '2d-platformer': {
     title: '2D PLATFORMER',
     subtitle: 'ENERGY-DRIVEN PLATFORMER',
@@ -419,6 +548,20 @@ const PROJECT_DATA = {
       { action: 'Super Jump', key: 'Energy + Space', pad: 'Energy + South Button' },
       { action: 'Dash', key: 'Energy + A / D', pad: 'Energy + D-Pad / Stick' },
       { action: 'Slam', key: 'Energy + S (Mid-air)', pad: 'Energy + Down' }
+    ]
+  },
+  'unity-vr': {
+    title: 'UNITY VR FRAMEWORK',
+    subtitle: 'XR INTERACTION & COMBAT SHOWCASE',
+    desc: 'An immersive Unity virtual reality interaction and physics framework built on the XR Interaction Toolkit (XRI). Features true velocity-derived controller and object tracking, custom two-handed look-rotation aim algorithms, exclusive tag-filtered sockets, and physical lever snap states.',
+    tech: ['Unity VR', 'C#', 'XR Interaction Toolkit', 'Universal Render Pipeline', 'NavMesh AI'],
+    controls: [
+      { action: 'Move Rig', key: 'Left Stick', pad: 'Left Stick' },
+      { action: 'Turn Snap / Smooth', key: 'Right Stick', pad: 'Right Stick' },
+      { action: 'Grab Object (Primary)', key: 'Grip Button (Hold)', pad: 'Grip Button (Hold)' },
+      { action: 'Aim Two-Handed (Secondary)', key: 'Secondary Grip (Hold)', pad: 'Secondary Grip (Hold)' },
+      { action: 'Physical Interaction', key: 'Physical Contact', pad: 'Physical Hand Push' },
+      { action: 'Consume Beverage', key: 'Bottle to Head', pad: 'Drink Motion' }
     ]
   }
 };
@@ -436,6 +579,48 @@ const ProjectDetails = () => {
   const [forgivenessActive, setForgivenessActive] = useState(false);
   const dragOccurred = useRef(false);
   const containerRef = useRef(null);
+
+  // Dynamic section numbering helper
+  const getSectionNum = (sectionName) => {
+    if (isPlatformer) {
+      const order = [
+        'inspiration',
+        'mechanics',
+        'diagrams',
+        'forgiveness',
+        'codeblocks',
+        'controls',
+        'expansion'
+      ];
+      const idx = order.indexOf(sectionName) + 1;
+      return idx < 10 ? `0${idx}` : `${idx}`;
+    } else if (isVR) {
+      const order = [
+        'inspiration',
+        'problem_solving',
+        'diagrams',
+        'sandbox',
+        'ai_gameplay',
+        'codeblocks',
+        'controls',
+        'expansion',
+        'reflection'
+      ];
+      const idx = order.indexOf(sectionName) + 1;
+      return idx < 10 ? `0${idx}` : `${idx}`;
+    } else {
+      const order = [
+        'inspiration',
+        'mechanics',
+        'diagrams',
+        'codeblocks',
+        'controls',
+        'expansion'
+      ];
+      const idx = order.indexOf(sectionName) + 1;
+      return idx < 10 ? `0${idx}` : `${idx}`;
+    }
+  };
 
   // Scroll to top when project page mounts
   useEffect(() => {
@@ -533,22 +718,27 @@ const ProjectDetails = () => {
   );
 
   const isPlatformer = normId === '2d-platformer';
+  const isVR = normId === 'unity-vr';
 
   // Set default active tab depending on project loaded
   useEffect(() => {
     if (isPlatformer) {
       setActiveCodeTab('enhancedMovement');
+    } else if (isVR) {
+      setActiveCodeTab('poolCueGrab');
     } else {
       setActiveCodeTab('powerUpEffect');
     }
     // Also reset selected diagram when switching projects
     setSelectedDiagram(0);
-  }, [isPlatformer]);
+  }, [isPlatformer, isVR]);
 
-  const activeDiagramList = isPlatformer ? PLATFORMER_DIAGRAMS : DIAGRAMS;
+  const activeDiagramList = isPlatformer 
+    ? PLATFORMER_DIAGRAMS 
+    : (isVR ? VR_DIAGRAMS : DIAGRAMS);
   const currentDiagList = forgivenessActive ? FORGIVENESS_DIAGRAMS : activeDiagramList;
 
-  if (!isKnockOut && !isPlatformer) {
+  if (!isKnockOut && !isPlatformer && !isVR) {
     // Default View for non-Knockout projects (Neon Drifter)
     return (
       <div className="page-container" style={{ padding: '80px 20px' }}>
@@ -598,13 +788,15 @@ const ProjectDetails = () => {
         </div>
         <div className="p5-doc-hero-visual">
           <img 
-            src={`${baseUrl}${isPlatformer ? 'images/documentation/platformer_main_screenshot.png' : 'images/documentation/KnockOutShowcaseImage.png'}`} 
-            alt={isPlatformer ? "2D Platformer Gameplay Showcase" : "Knock Out Showcase"} 
+            src={`${baseUrl}${isVR ? 'images/documentation/vr_editor_screenshot.png' : (isPlatformer ? 'images/documentation/platformer_main_screenshot.png' : 'images/documentation/KnockOutShowcaseImage.png')}`} 
+            alt={isVR ? "Unity VR Showcase Screenshot" : (isPlatformer ? "2D Platformer Gameplay Showcase" : "Knock Out Showcase")} 
             className="p5-doc-main-img" 
           />
-          <div className="p5-doc-img-label">
-            {isPlatformer ? "2D PLATFORMER GAMEPLAY SHOWCASE" : "OFFICIAL KNOCK OUT GAMEPLAY SHOWCASE"}
-          </div>
+          {!isVR && (
+            <div className="p5-doc-img-label">
+              {isPlatformer ? "2D PLATFORMER GAMEPLAY SHOWCASE" : "OFFICIAL KNOCK OUT GAMEPLAY SHOWCASE"}
+            </div>
+          )}
         </div>
       </section>
       {/* Gameplay Video Showcase */}
@@ -623,8 +815,8 @@ const ProjectDetails = () => {
           backgroundColor: '#000'
         }}>
           <iframe
-            src={isPlatformer ? "https://www.youtube.com/embed/zFtYdpY783o" : "https://www.youtube.com/embed/p6i66cxAxuo"}
-            title={isPlatformer ? "2D Platformer Gameplay Showcase" : "Knock Out Gameplay Showcase"}
+            src={isVR ? "https://www.youtube.com/embed/mGMNWYDuBkE" : (isPlatformer ? "https://www.youtube.com/embed/zFtYdpY783o" : "https://www.youtube.com/embed/p6i66cxAxuo")}
+            title={isVR ? "Unity VR Interactions Showcase" : (isPlatformer ? "2D Platformer Gameplay Showcase" : "Knock Out Gameplay Showcase")}
             style={{
               position: 'absolute',
               top: 0,
@@ -642,9 +834,26 @@ const ProjectDetails = () => {
       {/* 1. Inspiration and Research Section */}
       <section className="p5-doc-section dark-sec">
         <div className="p5-sec-header">
-          <span>01</span> INSPIRATION & RESEARCH
+          <span>{getSectionNum('inspiration')}</span> {isVR ? "ARCHITECTURAL OVERVIEW" : "INSPIRATION & RESEARCH"}
         </div>
-        {isPlatformer ? (
+        {isVR ? (
+          <div className="p5-sec-grid">
+            <div className="p5-sec-left">
+              <p>
+                Developing for virtual reality (VR) requires solving unique spatial engineering problems. Built on top of Unity's <strong>XR Interaction Toolkit (XRI)</strong>, this framework extends standard XR capabilities to support velocity-based physical combat, custom two-handed manipulation, environmental puzzle logic, and sensory feedback.
+              </p>
+              <p style={{ marginTop: '15px' }}>
+                <strong>Separation of Concerns:</strong> The architecture relies heavily on decoupling physics rigs from interactive components. By utilizing modular scripts (such as <code>Health.cs</code>, <code>ObjectVelocityTracker.cs</code>, and <code>EnemyAnimationController.cs</code>), components can be combined to form diverse gameplay situations and AI behaviors without code duplication.
+              </p>
+            </div>
+            <div className="p5-sec-right">
+              <div className="p5-card-skew">
+                <img src={`${baseUrl}images/documentation/vr_overall_architecture.png`} alt="Overall Component Architecture Class Diagram" className="p5-card-img" />
+                <div className="p5-card-caption">UML Class Diagram: Component decoupling and architecture overview.</div>
+              </div>
+            </div>
+          </div>
+        ) : isPlatformer ? (
           <div className="p5-sec-grid">
             <div className="p5-sec-left">
               <p>
@@ -708,15 +917,17 @@ const ProjectDetails = () => {
         )}
       </section>
 
-      {/* 2. Multiplicative Mechanic Design Section */}
+      {/* 2. Multiplicative Mechanic Design / XR Problem Solving Section */}
       <section className="p5-doc-section light-sec">
         <div className="p5-sec-header red-header">
-          <span>02</span> MULTIPLICATIVE MECHANIC DESIGN
+          <span>{getSectionNum(isVR ? 'problem_solving' : 'mechanics')}</span> {isVR ? "EXPERIMENTAL XR PROBLEM SOLVING" : "MULTIPLICATIVE MECHANIC DESIGN"}
         </div>
         <p className="section-intro">
           {isPlatformer 
             ? "To design a rich player toolkit without overloading keyboard real estate, standard movement features expand with energy modifiers."
-            : "To raise the skill ceiling without bloating inputs, overlapping mechanics are engineered to serve multiple tactical purposes."
+            : isVR
+              ? "To simulate high-fidelity spatial actions, physics-based subsystems are modularly layered to enable multi-layered interactive behaviors."
+              : "To raise the skill ceiling without bloating inputs, overlapping mechanics are engineered to serve multiple tactical purposes."
           }
         </p>
         {isPlatformer ? (
@@ -736,6 +947,25 @@ const ProjectDetails = () => {
             <div className="p5-mech-card">
               <h4>FORGIVING COYOTE TIME & JUMP BUFFERING</h4>
               <p>Physics sensors utilize stateful polling to cache grounded statuses. If a player walks off a ledge, a short coyote timer still allows jump execution. Jump inputs registered milliseconds before landing buffer and fire immediately upon touch.</p>
+            </div>
+          </div>
+        ) : isVR ? (
+          <div className="p5-multiplicative-grid">
+            <div className="p5-mech-card">
+              <h4>TWO-HANDED GRIP GIMBAL LOCK SOLVE</h4>
+              <p>Projects hand tracking vectors to align long tools (like cues or handles) while tracking controller rotation normals to preserve smooth, natural hand twists and prevent rotation snapping.</p>
+            </div>
+            <div className="p5-mech-card">
+              <h4>SOCKET JITTER RESOLUTION</h4>
+              <p>Temporarily disables collision response between sockets and snapped objects, avoiding persistent micro-collider friction jitter that can trigger spasms in the physics rig.</p>
+            </div>
+            <div className="p5-mech-card">
+              <h4>RIG-INDEPENDENT ATTACK VELOCITY</h4>
+              <p>Isolates the player's true physical swing velocity by subtracting the moving locomotion rig's movement velocity from the tracked raw controller motion.</p>
+            </div>
+            <div className="p5-mech-card">
+              <h4>SENSORY CONSUMABLE FLUID MATH</h4>
+              <p>Coordinates interactive drinking mechanics by measuring the bottle tilt angle relative to the player's head, triggering visual rendering distortions and intoxication shaders.</p>
             </div>
           </div>
         ) : (
@@ -763,7 +993,7 @@ const ProjectDetails = () => {
       {/* 3. System Architecture & UML Flow Diagrams */}
       <section className="p5-doc-section dark-sec">
         <div className="p5-sec-header">
-          <span>03</span> SYSTEM INTERACTION & DIAGRAMS
+          <span>{getSectionNum('diagrams')}</span> SYSTEM INTERACTION & DIAGRAMS
         </div>
         <p className="section-intro">
           {isPlatformer 
@@ -807,6 +1037,107 @@ const ProjectDetails = () => {
           </div>
         </div>
       </section>
+
+      {/* 4. Interaction Sandbox (VR Only) */}
+      {isVR && (
+        <section className="p5-doc-section light-sec">
+          <div className="p5-sec-header red-header">
+            <span>{getSectionNum('sandbox')}</span> INTERACTION SANDBOX
+          </div>
+          <p className="section-intro">
+            The framework supports a wide variety of player interactions, detailed below with their respective tracking scripts and mechanics.
+          </p>
+          <div className="p5-multiplicative-grid">
+            <div className="p5-mech-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--p5-black)', paddingBottom: '5px', marginBottom: '8px' }}>
+                <span style={{ color: 'var(--p5-red)', fontWeight: 'bold', fontSize: '0.85rem' }}>VELOCITY COMBAT</span>
+                <span style={{ fontSize: '0.8rem', opacity: 0.8, fontFamily: 'var(--font-p5-menu)' }}>PlayerPunch.cs / WoodenBatAttack.cs</span>
+              </div>
+              <h4>KINETIC SWING VERIFIER</h4>
+              <p>Detects true physical swing speed to deal damage dynamically. Includes varying audio impact feedback mapped to enemy health states.</p>
+            </div>
+            <div className="p5-mech-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--p5-black)', paddingBottom: '5px', marginBottom: '8px' }}>
+                <span style={{ color: 'var(--p5-red)', fontWeight: 'bold', fontSize: '0.85rem' }}>TWO-HANDED TOOLS</span>
+                <span style={{ fontSize: '0.8rem', opacity: 0.8, fontFamily: 'var(--font-p5-menu)' }}>PoolCueGrab.cs / XRTwoHandGrabInteractable.cs</span>
+              </div>
+              <h4>LOOK-ROTATION AIM ASSIST</h4>
+              <p>Interpolates targeting vectors for long objects like pool cues, incorporating wrist roll twist adjustments relative to tracked controller normals.</p>
+            </div>
+            <div className="p5-mech-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--p5-black)', paddingBottom: '5px', marginBottom: '8px' }}>
+                <span style={{ color: 'var(--p5-red)', fontWeight: 'bold', fontSize: '0.85rem' }}>STEAL-PREVENTION</span>
+                <span style={{ fontSize: '0.8rem', opacity: 0.8, fontFamily: 'var(--font-p5-menu)' }}>XRNonStealableInteractable.cs</span>
+              </div>
+              <h4>GRAB ACCESS CONTROL</h4>
+              <p>A custom XRI extension that locks held items, preventing secondary interactors from accidentally grabbing them out of sockets or hands.</p>
+            </div>
+            <div className="p5-mech-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--p5-black)', paddingBottom: '5px', marginBottom: '8px' }}>
+                <span style={{ color: 'var(--p5-red)', fontWeight: 'bold', fontSize: '0.85rem' }}>FILTERED SOCKETS</span>
+                <span style={{ fontSize: '0.8rem', opacity: 0.8, fontFamily: 'var(--font-p5-menu)' }}>XRExclusiveSocket.cs</span>
+              </div>
+              <h4>EXCLUSIVE TAG VALIDATION</h4>
+              <p>Overrides native socket snaps to validate objects by target tags, allowing designers to build precise item key/lock puzzle slots.</p>
+            </div>
+            <div className="p5-mech-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--p5-black)', paddingBottom: '5px', marginBottom: '8px' }}>
+                <span style={{ color: 'var(--p5-red)', fontWeight: 'bold', fontSize: '0.85rem' }}>PHYSICAL LEVERS</span>
+                <span style={{ fontSize: '0.8rem', opacity: 0.8, fontFamily: 'var(--font-p5-menu)' }}>XRLever.cs</span>
+              </div>
+              <h4>ATAN2 ROTATIONAL TRACKING</h4>
+              <p>Maps interactor coordinates to a circle via Atan2 to compute rotation angles. Snaps smoothly to extents and features automated resets.</p>
+            </div>
+            <div className="p5-mech-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--p5-black)', paddingBottom: '5px', marginBottom: '8px' }}>
+                <span style={{ color: 'var(--p5-red)', fontWeight: 'bold', fontSize: '0.85rem' }}>SENSORY CONSUMABLES</span>
+                <span style={{ fontSize: '0.8rem', opacity: 0.8, fontFamily: 'var(--font-p5-menu)' }}>Drink.cs / CameraJitter.cs</span>
+              </div>
+              <h4>TILT & HEAD CHECK MATH</h4>
+              <p>Computes dot product of bottle up-vectors against world down, using raycasting to detect player heads and trigger URP visual/audio intoxication states.</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 5. AI & Gameplay Systems (VR Only) */}
+      {isVR && (
+        <section className="p5-doc-section dark-sec">
+          <div className="p5-sec-header">
+            <span>{getSectionNum('ai_gameplay')}</span> AI & GAMEPLAY SYSTEMS
+          </div>
+          <div className="p5-sec-grid">
+            <div className="p5-sec-left">
+              <h3 style={{ fontFamily: 'var(--font-p5-header)', fontSize: '2.2rem', color: 'var(--p5-yellow)', marginBottom: '15px' }}>
+                ENEMY STATE MACHINE
+              </h3>
+              <p>
+                The <code>EnemyController.cs</code> and <code>EnemyAnimationController.cs</code> scripts establish a lightweight, state-driven AI navigator.
+              </p>
+              <ul style={{ paddingLeft: '20px', marginTop: '12px', fontSize: '0.95rem', lineHeight: '1.6', color: '#ccc' }}>
+                <li><strong>NavMesh Tracking:</strong> Integrates with Unity's NavMesh system to dynamically track and pathfind towards the player's position.</li>
+                <li><strong>Animator Hash Caching:</strong> Pre-calculates animator parameters into integer hashes on initialization to avoid runtime string lookups.</li>
+                <li><strong>Recovery Frame Protection:</strong> Temporarily sets <code>m_Punchable = false</code> during recovery animations to prevent stagger-locking.</li>
+                <li><strong>Adaptive Combat Range:</strong> Chooses between quick jabs and heavy cross punches based on proximity stop-radii and random chance.</li>
+              </ul>
+            </div>
+            <div className="p5-sec-right">
+              <h3 style={{ fontFamily: 'var(--font-p5-header)', fontSize: '2.2rem', color: 'var(--p5-white)', marginBottom: '15px' }}>
+                SEQUENTIAL PUZZLE SYSTEM
+              </h3>
+              <p>
+                The <code>UnlockChest.cs</code> controller implements a stateful sequence validation system for opening interactive loot containers.
+              </p>
+              <ul style={{ paddingLeft: '20px', marginTop: '12px', fontSize: '0.95rem', lineHeight: '1.6', color: '#ccc' }}>
+                <li><strong>Ordered Validation:</strong> Tracks three physical buttons. They must be pressed in the exact pre-defined order to unlock the container lid.</li>
+                <li><strong>State Resets:</strong> Pressing an incorrect button resets the sequence state, triggering audio warning alerts to the user.</li>
+                <li><strong>Lever-Lock Integration:</strong> Keeps the main chest lid grab-interactable deactivated until all buttons are verified.</li>
+                <li><strong>Decoupled Audio Indicators:</strong> Uses distinct success and failure audio cues, eliminating the need for intrusive on-screen UI prompts.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Diagram Lightbox Overlay */}
       {isDiagramZoomed && (
@@ -1010,12 +1341,14 @@ const ProjectDetails = () => {
       {/* 4. Interactive C# Code Codeblocks */}
       <section className="p5-doc-section light-sec">
         <div className="p5-sec-header red-header">
-          <span>{isPlatformer ? '05' : '04'}</span> SYSTEM CODEBLOCKS & IMPLEMENTATION
+          <span>{getSectionNum('codeblocks')}</span> SYSTEM CODEBLOCKS & IMPLEMENTATION
         </div>
         <p className="section-intro">
           {isPlatformer 
             ? "This code segment exhibits a vertical slice of a consistent programming paradigm, showcasing coroutine-based enhanced movement controls and C# Event handler decoupling via ScriptableObjects."
-            : "This code segment exhibits a vertical slice of a consistent programming paradigm, showcasing the strategy pattern implementation and network projectile clashing code running authoritatively on the server."
+            : isVR
+              ? "This code segment exhibits a vertical slice of a consistent programming paradigm, showcasing raw velocity calculations, look-rotation dual-hand anchors, and socket-based collision bypass algorithms."
+              : "This code segment exhibits a vertical slice of a consistent programming paradigm, showcasing the strategy pattern implementation and network projectile clashing code running authoritatively on the server."
           }
         </p>
 
@@ -1041,6 +1374,27 @@ const ProjectDetails = () => {
                   className={`p5-code-tab ${activeCodeTab === 'playerController' ? 'active' : ''}`}
                 >
                   PlayerController.cs (Input)
+                </button>
+              </>
+            ) : isVR ? (
+              <>
+                <button
+                  onClick={() => setActiveCodeTab('poolCueGrab')}
+                  className={`p5-code-tab ${activeCodeTab === 'poolCueGrab' ? 'active' : ''}`}
+                >
+                  PoolCueGrab.cs (Look-Rotation)
+                </button>
+                <button
+                  onClick={() => setActiveCodeTab('controllerVelocity')}
+                  className={`p5-code-tab ${activeCodeTab === 'controllerVelocity' ? 'active' : ''}`}
+                >
+                  ControllerVelocity.cs (Velocity)
+                </button>
+                <button
+                  onClick={() => setActiveCodeTab('ignoreCollisionWithSocket')}
+                  className={`p5-code-tab ${activeCodeTab === 'ignoreCollisionWithSocket' ? 'active' : ''}`}
+                >
+                  IgnoreCollisionWithSocket.cs (Jitter)
                 </button>
               </>
             ) : (
@@ -1079,7 +1433,11 @@ const ProjectDetails = () => {
                     : activeCodeTab === 'projectileClash' ? 'NetworkProjectile.cs'
                     : activeCodeTab === 'enhancedMovement' ? 'EnhancedMovement.cs'
                     : activeCodeTab === 'gameEvent' ? 'GameEvent.cs'
-                    : 'PlayerController.cs'}
+                    : activeCodeTab === 'playerController' ? 'PlayerController.cs'
+                    : activeCodeTab === 'poolCueGrab' ? 'PoolCueGrab.cs'
+                    : activeCodeTab === 'controllerVelocity' ? 'ControllerVelocity.cs'
+                    : activeCodeTab === 'ignoreCollisionWithSocket' ? 'IgnoreCollisionWithSocket.cs'
+                    : 'Code'}
                 </span>
               </div>
               <pre className="p5-code-pre">
@@ -1106,11 +1464,11 @@ const ProjectDetails = () => {
       {/* 5. Game Rules & Control Mapping */}
       <section className="p5-doc-section dark-sec">
         <div className="p5-sec-header">
-          <span>05</span> GAME CONTROLS & RULES
+          <span>{getSectionNum('controls')}</span> GAME CONTROLS & RULES
         </div>
         <div className="p5-rules-grid">
           <div className="p5-rules-left">
-            <h3 style={{ fontFamily: 'var(--font-p5-hand)', fontSize: '2rem', color: 'var(--p5-yellow)', marginBottom: '15px' }}>
+            <h3 style={{ fontFamily: 'var(--font-p5-header)', fontSize: '2rem', color: 'var(--p5-yellow)', marginBottom: '15px' }}>
               THE RULES OF ENGAGEMENT
             </h3>
             {isPlatformer ? (
@@ -1119,6 +1477,13 @@ const ProjectDetails = () => {
                 <li><strong>Forgiving Physics:</strong> Coyote time allows jumps up to 0.15s after leaving ledges; buffered inputs cache presses right before landing.</li>
                 <li><strong>Health & Traps:</strong> Spikes deal damage. Reaching zero health raises PlayerOnDeath, notifying the GameManager to reset and respawn.</li>
                 <li><strong>Energy Meter:</strong> Entering slow-motion time dilation continuously drains energy, requiring cooldown recovery intervals.</li>
+              </ul>
+            ) : isVR ? (
+              <ul className="p5-rules-list">
+                <li><strong>Separation of Concerns:</strong> The locomotion rig is completely decoupled from tracked controllers and physical grab scripts to prevent dependency locking.</li>
+                <li><strong>Physics Swing Verifier:</strong> Swing velocity must exceed a configurable threshold before registering impact damage.</li>
+                <li><strong>Look-Rotation Joints:</strong> Custom mathematical joint models align held tools cleanly, tracking rotation normals to support hand twists.</li>
+                <li><strong>Exclusive Tag Sockets:</strong> Sockets validate target components by checking custom tag profiles, restricting snap actions to matching assets.</li>
               </ul>
             ) : (
               <ul className="p5-rules-list">
@@ -1130,7 +1495,7 @@ const ProjectDetails = () => {
             )}
           </div>
           <div className="p5-rules-right">
-            <h3 style={{ fontFamily: 'var(--font-p5-hand)', fontSize: '2rem', color: 'var(--p5-white)', marginBottom: '15px', textAlign: 'center' }}>
+            <h3 style={{ fontFamily: 'var(--font-p5-header)', fontSize: '2rem', color: 'var(--p5-white)', marginBottom: '15px', textAlign: 'center' }}>
               CONTROLS LAYOUT
             </h3>
             <table className="p5-controls-table">
@@ -1158,11 +1523,11 @@ const ProjectDetails = () => {
       {/* 6. Designer Expansion Guide */}
       <section className="p5-doc-section light-sec">
         <div className="p5-sec-header red-header">
-          <span>06</span> DESIGNER EXPANSION BRIEF
+          <span>{getSectionNum('expansion')}</span> DESIGNER EXPANSION BRIEF
         </div>
         <div className="p5-designer-guide">
           <h3>
-            {isPlatformer ? "HOW TO DEPLOY GLOBAL EVENTS" : "HOW TO ADD NEW POWER-UPS"}
+            {isPlatformer ? "HOW TO DEPLOY GLOBAL EVENTS" : isVR ? "HOW TO DEPLOY EXCLUSIVE SOCKETS" : "HOW TO ADD NEW POWER-UPS"}
           </h3>
           {isPlatformer ? (
             <div className="p5-steps-grid">
@@ -1193,6 +1558,37 @@ const ProjectDetails = () => {
                   <h5>Bind Inspector Responses</h5>
                 </div>
                 <p>Append a new event response item in the inspector list. Reference your event asset and use the visual UnityEvent callback block to invoke public class functions.</p>
+              </div>
+            </div>
+          ) : isVR ? (
+            <div className="p5-steps-grid">
+              <div className="p5-step-card">
+                <div className="p5-step-header">
+                  <div className="step-num">01</div>
+                  <h5>Configure Snap Socket</h5>
+                </div>
+                <p>Place an <code>XRSocketInteractor</code> component on your socket anchor. Assign the custom exclusive tag validator script component.</p>
+              </div>
+              <div className="p5-step-card">
+                <div className="p5-step-header">
+                  <div className="step-num">02</div>
+                  <h5>Set Allowed Snap Tag</h5>
+                </div>
+                <p>In the tag validator inspector block, input the unique tag string that this socket accepts (e.g., <code>BlueKeyCard</code> or <code>LargeGear</code>).</p>
+              </div>
+              <div className="p5-step-card">
+                <div className="p5-step-header">
+                  <div className="step-num">03</div>
+                  <h5>Configure Snap Target</h5>
+                </div>
+                <p>Attach the corresponding interactable grab component to your target GameObject and ensure its tag matches the socket's validator tag.</p>
+              </div>
+              <div className="p5-step-card">
+                <div className="p5-step-header">
+                  <div className="step-num">04</div>
+                  <h5>Disable Socket Collisions</h5>
+                </div>
+                <p>Attach <code>IgnoreCollisionWithSocket.cs</code> to the socket to automatically deactivate collision physics on select entry and restore it on exit.</p>
               </div>
             </div>
           ) : (
@@ -1244,6 +1640,40 @@ const ProjectDetails = () => {
           )}
         </div>
       </section>
+
+      {/* 7. Code Quality & Reflection (VR Only) */}
+      {isVR && (
+        <section className="p5-doc-section dark-sec" style={{ borderTop: '4px solid var(--p5-red)', marginTop: '40px' }}>
+          <div className="p5-sec-header">
+            <span>{getSectionNum('reflection')}</span> CODE QUALITY & SELF-REFLECTION
+          </div>
+          <p className="section-intro">
+            A critical reflection on the framework's software architecture design, optimization strategies, and planned refactoring improvements.
+          </p>
+          <div className="p5-sec-grid">
+            <div className="p5-sec-left">
+              <h3 style={{ fontFamily: 'var(--font-p5-header)', fontSize: '2rem', color: 'var(--p5-yellow)', marginBottom: '15px' }}>
+                ARCHITECTURAL STRENGTHS
+              </h3>
+              <ul className="p5-rules-list">
+                <li><strong>Event-Driven Communication:</strong> Employs C# Actions (like <code>OnDeath</code> in <code>Health.cs</code>) and UnityEvents (in <code>XRLever.cs</code>) to prevent tight coupling, allowing systems to update automatically without circular dependencies.</li>
+                <li><strong>Performance Optimization:</strong> Animator parameter names are pre-cached into integer hashes (using <code>Animator.StringToHash</code>) during <code>Awake()</code> to avoid expensive string lookups in runtime update loops.</li>
+                <li><strong>Fail-Safes & Editor Validation:</strong> Extensive use of null checks and <code>Debug.LogWarning</code> validation alongside the <code>[RequireComponent]</code> attribute to enforce script dependencies at design time.</li>
+              </ul>
+            </div>
+            <div className="p5-sec-right">
+              <h3 style={{ fontFamily: 'var(--font-p5-header)', fontSize: '2rem', color: 'var(--p5-white)', marginBottom: '15px' }}>
+                AREAS FOR IMPROVEMENT
+              </h3>
+              <ul className="p5-rules-list">
+                <li><strong>Hardcoded Magic Strings:</strong> Animator calls currently reference hardcoded layer strings. These will be refactored into a static constants class or Enums to prevent spelling errors.</li>
+                <li><strong>Decoupling Raycast Targets:</strong> Refactor <code>Drink.cs</code> to interact with a general <code>ISensoryReceiver</code> interface, allowing any AI character to react to consumables instead of only the player camera rig.</li>
+                <li><strong>Centralized Audio Pooling:</strong> Replace ad-hoc <code>AudioSource</code> additions with a centralized <code>AudioManager</code> pool to decrease runtime instantiation overhead and avoid audio clipping.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
 
 
 

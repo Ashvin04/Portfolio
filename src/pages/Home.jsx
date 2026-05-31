@@ -41,7 +41,7 @@ const Home = ({ activeView, onNavClick }) => {
   };
 
   return (
-    <div className="page-container" style={{ minHeight: '90vh', display: 'flex', alignItems: 'center' }}>
+    <div className="page-container" style={{ display: 'flex', alignItems: 'center' }}>
       <div className="p5-home-container" style={{ width: '100%' }}>
         <div className="p5-home-layout">
           
@@ -83,10 +83,7 @@ const Home = ({ activeView, onNavClick }) => {
               className="p5-hero-desc"
             >
               Specializing in gameplay scripting, robust multiplayer netcode, dynamic camera algorithms, and responsive game UI structures. 
-              <br />
-              <span style={{ color: 'var(--p5-yellow)', fontFamily: 'var(--font-p5-hand)', fontSize: '1.4rem' }}>
-                "We will steal your bugs and deliver smooth systems."
-              </span>
+              Driven by a strong, constant will to learn new things, master modern tools, and build highly polished game experiences.
             </motion.div>
 
           </div>

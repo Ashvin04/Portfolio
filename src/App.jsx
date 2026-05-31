@@ -6,12 +6,11 @@ import About from './pages/About';
 import Works from './pages/Works';
 import CallingCard from './pages/CallingCard';
 import ProjectDetails from './pages/ProjectDetails';
+import P5SloganRibbon from './components/P5SloganRibbon';
 import './App.css';
 
 // Main Scrolling Single Page Component
-const MainPortfolio = () => {
-  const [activeView, setActiveView] = useState('home');
-
+const MainPortfolio = ({ activeView, setActiveView }) => {
   // Scroll to top on mount (e.g. when navigating back from ProjectDetails)
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,7 +41,7 @@ const MainPortfolio = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [setActiveView]);
 
   const handleNavClick = (id) => {
     if (id === 'home') {
@@ -63,41 +62,46 @@ const MainPortfolio = () => {
       <Header activeView={activeView} onNavClick={handleNavClick} />
       
       {/* Scrollable Layout sections */}
-      <div id="home">
-        <Home activeView={activeView} onNavClick={handleNavClick} />
-      </div>
-      
-      <div id="programmer">
-        <About onNavClick={handleNavClick} />
-      </div>
-      
-      <div id="works">
-        {/* We pass undefined for project click because Works will use useNavigate directly */}
-        <Works onProjectClick={undefined} onNavClick={handleNavClick} />
-      </div>
-      
-      <div id="card">
-        <CallingCard onNavClick={handleNavClick} />
-      </div>
+      <main>
+        <div id="home">
+          <Home activeView={activeView} onNavClick={handleNavClick} />
+        </div>
+        
+        <div id="programmer">
+          <About onNavClick={handleNavClick} />
+        </div>
+        
+        <div id="works">
+          {/* We pass undefined for project click because Works will use useNavigate directly */}
+          <Works onProjectClick={undefined} onNavClick={handleNavClick} />
+        </div>
+        
+        <div id="card">
+          <CallingCard onNavClick={handleNavClick} />
+        </div>
+      </main>
     </>
   );
 };
 
 // Main Routing App Component
 function App() {
+  const [activeView, setActiveView] = useState('home');
+
   return (
     <Router>
-      <div className="app-container">
+      <div className={`app-container view-${activeView}`}>
         {/* Dynamic full-screen background */}
         <div className="p5-bg-canvas">
           <div className="p5-bg-stripes"></div>
           <div className="p5-bg-halftone"></div>
           <div className="p5-bg-spiral"></div>
+          <P5SloganRibbon activeView={activeView} />
         </div>
 
         <Routes>
           {/* Main Landing Route */}
-          <Route path="/" element={<MainPortfolio />} />
+          <Route path="/" element={<MainPortfolio activeView={activeView} setActiveView={setActiveView} />} />
           
           {/* Dedicated Project Details Page Route */}
           <Route path="/project/:id" element={<ProjectDetails />} />

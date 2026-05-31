@@ -17,7 +17,7 @@ const About = ({ onNavClick }) => {
   ];
 
   return (
-    <div className="page-container" style={{ position: 'relative', minHeight: '90vh', padding: '60px 0' }}>
+    <div className="page-container" style={{ position: 'relative', minHeight: 'auto', padding: '20px 0' }}>
       
       {/* Title */}
       <div style={{ marginBottom: '30px', marginTop: '10px' }}>
@@ -51,7 +51,7 @@ const About = ({ onNavClick }) => {
             <p style={{ fontSize: '0.95rem', lineHeight: '1.5', color: '#ccc' }}>
               Gameplay developer dedicated to designing responsive systems and immersive user layouts. 
               Experienced in structuring netcode architectures and camera setups that feel responsive and dynamic. 
-              Always eager to polish features and write clean code.
+              Always eager to polish features, learn new things, and write clean code.
             </p>
           </div>
         </motion.div>

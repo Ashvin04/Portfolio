@@ -1,0 +1,68 @@
+.p5-slogan-ribbon-container {
+  position: fixed;
+  top: 55%;
+  left: 0;
+  width: 100vw;
+  z-index: -2;
+  pointer-events: none;
+}
+
+.p5-slogan-ribbon {
+  position: relative;
+  padding: clamp(10px, 1.8vw, 25px) 0;
+  transform: rotate(-7deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The actual white background ribbon extends off-screen */
+.p5-slogan-ribbon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -20vw;
+  width: 140vw;
+  height: 100%;
+  background-color: var(--p5-white);
+  border-top: clamp(4px, 0.7vw, 10px) solid var(--p5-black);
+  border-bottom: clamp(4px, 0.7vw, 10px) solid var(--p5-black);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  z-index: -1;
+}
+
+/* The text is constrained strictly to the viewport width */
+.p5-slogan-content {
+  display: flex;
+  gap: clamp(10px, 2.8vw, 40px);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 95vw;
+  margin: 0 auto;
+}
+
+.p5-slogan-word {
+  display: flex;
+  gap: clamp(3px, 0.5vw, 8px);
+  align-items: center;
+}
+
+.p5-slogan-letter-box {
+  display: inline-block;
+  font-family: var(--font-p5-ransom);
+  font-size: clamp(1.1rem, 3.8vw, 3.8rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: clamp(4px, 1vw, 10px) clamp(7px, 1.6vw, 18px);
+  box-shadow: clamp(2px, 0.4vw, 6px) clamp(2px, 0.4vw, 6px) 0px var(--p5-black);
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .p5-slogan-ribbon-container {
+    top: 50%;
+  }
+}
