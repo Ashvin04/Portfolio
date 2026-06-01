@@ -6,7 +6,7 @@ const P5SloganRibbon = ({ activeView }) => {
   const isHome = activeView === 'home';
 
   // Words configuration to get exactly the aesthetic from the reference image
-  // Alternating styles, custom offsets, colors, and borders to look like cutout letters
+  // Alternating styles, custom offsets, colours, and borders to look like cutout letters
   const sloganData = [
     {
       word: "TAKE",

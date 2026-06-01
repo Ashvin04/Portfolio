@@ -125,7 +125,7 @@ public class GiantPowerUpEffect : PowerUpEffect
     private int GetHealthBonus() => m_Def.BonusHealth;
     private float GetSpeedModifier() => m_Def.SpeedMultiplier - 1.0f;
 }`,
-  projectileClash: `// NetworkProjectile.cs - Active Defense Collision clashing checks
+  projectileClash: `// NetworkProjectile.cs - Active Defence Collision clashing checks
 private void OnTriggerEnter(Collider other)
 {
     if (!IsServer) return;
@@ -324,13 +324,13 @@ const DIAGRAMS = [
     id: 'strategy', 
     label: 'Strategy Powerup Config', 
     src: 'images/documentation/image5.png', 
-    desc: 'The dynamic Strategy Pattern implementation for player buffs. Behaviors are encapsulated in interchangeable classes inheriting from PowerUpEffect (defining OnEquip/OnUnequip lifecycles). Game balancing variables are stored in ScriptableObject definitions (e.g. GiantPowerUpDefinition) and edited directly in the Unity Inspector. When a player receives a power-up, the SO data is injected into the strategy instance, cleanly decoupling editor-time balancing from runtime logic.' 
+    desc: 'The dynamic Strategy Pattern implementation for player buffs. Behaviours are encapsulated in interchangeable classes inheriting from PowerUpEffect (defining OnEquip/OnUnequip lifecycles). Game balancing variables are stored in ScriptableObject definitions (e.g. GiantPowerUpDefinition) and edited directly in the Unity Inspector. When a player receives a power-up, the SO data is injected into the strategy instance, cleanly decoupling editor-time balancing from runtime logic.' 
   },
   { 
     id: 'arch', 
     label: 'Network Authority Flow', 
     src: 'images/documentation/image6.png', 
-    desc: 'authoritative network model implemented using Unity Netcode for GameObjects (NGO). Player inputs and gameplay events (damage application, parry timing) are sent to the server via ServerRpc. The server validates physics and health states, then synchronizes results back to all clients using NetworkVariables (for state updates like health bars) and ClientRpc (for transient feedback like particle effects and sound cues).' 
+    desc: 'authoritative network model implemented using Unity Netcode for GameObjects (NGO). Player inputs and gameplay events (damage application, parry timing) are sent to the server via ServerRpc. The server validates physics and health states, then synchronises results back to all clients using NetworkVariables (for state updates like health bars) and ClientRpc (for transient feedback like particle effects and sound cues).' 
   }
 ];
 
@@ -360,7 +360,7 @@ const FORGIVENESS_DIAGRAMS = [
     id: 'plat-coyote-time', 
     label: 'Coyote Time Mechanics', 
     src: 'images/documentation/coyote_time.png', 
-    desc: 'Visualizes the Coyote Time window. When the character walks off a ledge without jumping, the grounded sensor disables, but a coyote time timer begins. If the jump button is pressed during this brief window, the jump executes successfully, preventing frustration from late inputs.' 
+    desc: 'Visualises the Coyote Time window. When the character walks off a ledge without jumping, the grounded sensor disables, but a coyote time timer begins. If the jump button is pressed during this brief window, the jump executes successfully, preventing frustration from late inputs.' 
   },
   { 
     id: 'plat-jump-buffering', 
@@ -431,10 +431,10 @@ const CODE_EXPLANATIONS = {
   powerUpEffect: {
     title: "Base Power-Up Abstraction Class",
     concept: "Strategy Pattern Interface",
-    description: "This abstract base class establishes the lifecycle contract for all power-up effects in the game. It provides concrete methods for equipping and unequipping to cache references, while forcing inheriting classes to define activation and deactivation behaviors.",
+    description: "This abstract base class establishes the lifecycle contract for all power-up effects in the game. It provides concrete methods for equipping and unequipping to cache references, while forcing inheriting classes to define activation and deactivation behaviours.",
     points: [
       "Defines OnEquip() and OnUnequip() to handle caching and cleanup.",
-      "Uses abstract OnActivate() and OnDeactivate() methods to implement custom behaviors.",
+      "Uses abstract OnActivate() and OnDeactivate() methods to implement custom behaviours.",
       "Enables the PlayerPowerUpController to stack and manage list modifiers without checking specific types."
     ]
   },
@@ -450,7 +450,7 @@ const CODE_EXPLANATIONS = {
   },
   projectileClash: {
     title: "Network Projectile Collision & Clashing",
-    concept: "Active Defense Physics Validation",
+    concept: "Active Defence Physics Validation",
     description: "Determines authoritative projectile collisions. When two bullets collide, the server calculates their relative sizes. Identical projectiles cancel out; however, if a player possesses a bullet size modifier, their larger projectile destroys the smaller one and continues on its trajectory.",
     points: [
       "Performs math comparison with float tolerance checks to guarantee stable network sync.",
@@ -515,7 +515,7 @@ const CODE_EXPLANATIONS = {
     points: [
       "Subscribes to selectEntered and selectExited UnityEvents on the XRI socket.",
       "Instructs Physics.IgnoreCollision to disable physical interaction dynamically.",
-      "Ensures butter-smooth snapping without losing physical physics behavior after exit."
+      "Ensures butter-smooth snapping without losing physical physics behaviour after exit."
     ]
   }
 };
@@ -843,7 +843,7 @@ const ProjectDetails = () => {
                 Developing for virtual reality (VR) requires solving unique spatial engineering problems. Built on top of Unity's <strong>XR Interaction Toolkit (XRI)</strong>, this framework extends standard XR capabilities to support velocity-based physical combat, custom two-handed manipulation, environmental puzzle logic, and sensory feedback.
               </p>
               <p style={{ marginTop: '15px' }}>
-                <strong>Separation of Concerns:</strong> The architecture relies heavily on decoupling physics rigs from interactive components. By utilizing modular scripts (such as <code>Health.cs</code>, <code>ObjectVelocityTracker.cs</code>, and <code>EnemyAnimationController.cs</code>), components can be combined to form diverse gameplay situations and AI behaviors without code duplication.
+                <strong>Separation of Concerns:</strong> The architecture relies heavily on decoupling physics rigs from interactive components. By utilizing modular scripts (such as <code>Health.cs</code>, <code>ObjectVelocityTracker.cs</code>, and <code>EnemyAnimationController.cs</code>), components can be combined to form diverse gameplay situations and AI behaviours without code duplication.
               </p>
             </div>
             <div className="p5-sec-right">
@@ -860,7 +860,7 @@ const ProjectDetails = () => {
                 In high-speed 2D platforming, tight reflex loops dictate player success. Traditional platformers run at real-time speeds, which can create high cognitive friction for players navigating complex hazards. The core input modifier and mobility mechanics are inspired by <strong>Naruto Shippuden: Ultimate Ninja Storm 4</strong>, which utilizes a dedicated "Chakra" modifier button to elevate standard actions into high-potency variants.
               </p>
               <p style={{ marginTop: '15px' }}>
-                <strong>Slow-Mo Mechanics:</strong> Holding the Energy button triggers a slow-motion matrix effect. This provides players with extra frames to analyze trap patterns, time jumps, and aim dashes dynamically.
+                <strong>Slow-Mo Mechanics:</strong> Holding the Energy button triggers a slow-motion matrix effect. This provides players with extra frames to analyse trap patterns, time jumps, and aim dashes dynamically.
               </p>
               <p style={{ marginTop: '15px' }}>
                 <strong>Resource Management:</strong> To prevent players from abuse, slow-motion drains the energy pool continuously. Depleting the pool completely halts enhanced abilities, transforming slow-motion from a passive assistance tool into an active tactical resource.
@@ -926,7 +926,7 @@ const ProjectDetails = () => {
           {isPlatformer 
             ? "To design a rich player toolkit without overloading keyboard real estate, standard movement features expand with energy modifiers."
             : isVR
-              ? "To simulate high-fidelity spatial actions, physics-based subsystems are modularly layered to enable multi-layered interactive behaviors."
+              ? "To simulate high-fidelity spatial actions, physics-based subsystems are modularly layered to enable multi-layered interactive behaviours."
               : "To raise the skill ceiling without bloating inputs, overlapping mechanics are engineered to serve multiple tactical purposes."
           }
         </p>
@@ -997,8 +997,8 @@ const ProjectDetails = () => {
         </div>
         <p className="section-intro">
           {isPlatformer 
-            ? "Decoupled, modular code design allows clean scalability. Systems are modeled using the event-driven Observer pattern and independent controller abstraction mappings. Click any diagram below to inspect it in full screen detail."
-            : "Decoupled, modular code design allows clean scalability with netcode. Systems are modeled using the Observer, Strategy, and Server-Authoritative Netcode patterns. Click any diagram below to inspect it in full screen detail."
+            ? "Decoupled, modular code design allows clean scalability. Systems are modelled using the event-driven Observer pattern and independent controller abstraction mappings. Click any diagram below to inspect it in full screen detail."
+            : "Decoupled, modular code design allows clean scalability with netcode. Systems are modelled using the Observer, Strategy, and Server-Authoritative Netcode patterns. Click any diagram below to inspect it in full screen detail."
           }
         </p>
 
