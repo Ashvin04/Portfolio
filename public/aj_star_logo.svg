@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="500" height="500">
+  <defs>
+    <style>
+      .star-layer {
+        stroke-linejoin: miter;
+      }
+      .text-bg {
+        font-family: 'Persona5Menu', Impact, sans-serif;
+        font-size: 38px;
+        font-weight: bold;
+        fill: #080808;
+        stroke: #080808;
+        stroke-width: 8px;
+        letter-spacing: -1px;
+      }
+      .text-main {
+        font-family: 'Persona5Menu', Impact, sans-serif;
+        font-size: 38px;
+        font-weight: bold;
+        fill: #ffffff;
+        letter-spacing: -1px;
+      }
+    </style>
+  </defs>
+
+  <!-- Star logo elements -->
+  <g>
+    <g transform="translate(100, 100) scale(0.80) translate(-100, -100)">
+      <!-- Flat Vector Shadow (replaces CSS drop-shadow filter for vector design tool compatibility) -->
+      <path
+        d="M 92 10 L 122 72 L 192 60 L 134 110 L 165 172 L 97 127 L 32 156 L 58 100 L 10 75 L 70 68 Z"
+        fill="#000000"
+        stroke="#000000"
+        stroke-width="14"
+        class="star-layer"
+        transform="translate(4, 6)"
+        opacity="0.9"
+      />
+
+      <!-- Layer 1: Outer Black Star (Shadow/Outline base) -->
+      <path
+        d="M 92 10 L 122 72 L 192 60 L 134 110 L 165 172 L 97 127 L 32 156 L 58 100 L 10 75 L 70 68 Z"
+        fill="#080808"
+        stroke="#080808"
+        stroke-width="14"
+        class="star-layer"
+      />
+
+      <!-- Layer 2: White Star Border -->
+      <path
+        d="M 92 10 L 122 72 L 192 60 L 134 110 L 165 172 L 97 127 L 32 156 L 58 100 L 10 75 L 70 68 Z"
+        fill="#ffffff"
+        stroke="#ffffff"
+        stroke-width="8"
+        class="star-layer"
+      />
+
+      <!-- Layer 3: Inner Black Star -->
+      <path
+        d="M 92 10 L 122 72 L 192 60 L 134 110 L 165 172 L 97 127 L 32 156 L 58 100 L 10 75 L 70 68 Z"
+        fill="#080808"
+        stroke="#080808"
+        stroke-width="2"
+        class="star-layer"
+        transform="translate(100, 100) scale(0.85) translate(-100, -100)"
+      />
+
+      <!-- Inner White Accent Star Outline -->
+      <path
+        d="M 92 10 L 122 72 L 192 60 L 134 110 L 165 172 L 97 127 L 32 156 L 58 100 L 10 75 L 70 68 Z"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="2"
+        class="star-layer"
+        transform="translate(100, 100) scale(0.72) translate(-100, -100)"
+      />
+
+      <!-- "A.J" Text overlay styled and rotated -->
+      <g transform="translate(100, 110) rotate(-10)">
+        <!-- Black background text for thick stroke outline -->
+        <text
+          x="0"
+          y="0"
+          text-anchor="middle"
+          class="text-bg"
+        >A.J</text>
+        <!-- Main White Text -->
+        <text
+          x="0"
+          y="0"
+          text-anchor="middle"
+          class="text-main"
+        >A.J</text>
+      </g>
+    </g>
+  </g>
+</svg>
