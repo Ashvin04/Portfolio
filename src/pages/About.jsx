@@ -111,7 +111,7 @@ const About = ({ onNavClick }) => {
                   A Levels
                 </h4>
                 <p style={{ fontSize: '0.95rem', color: '#555', margin: '2px 0 0 0', fontWeight: 700 }}>
-                  Mathematics, Further Mathematics, Computer Science
+                  North Bristol Post 16 — Mathematics, Further Mathematics, Computer Science
                 </p>
               </div>
             </div>
